@@ -6,7 +6,7 @@ def run():
     # Charger le fichier CSV dans un DataFrame Pandas
     df = pd.read_csv("data/clubs-data-2021.csv", delimiter=";")
 
-    print("Chargement du fichier CSV terminé.")
+    print(f"Chargement du fichier CSV terminé. Nombre de lignes à insérer : {len(df)}")
 
     # Tronquer la table Club
     Club.objects.all().delete()
