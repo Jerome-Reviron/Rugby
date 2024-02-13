@@ -63,7 +63,7 @@ def run():
             h_nr=row['H - NR'],
             nr_nr=row['NR - NR'],
             total=row['Total'],
-            creation_date=datetime.now()
+
         )
         players.append(player)
 

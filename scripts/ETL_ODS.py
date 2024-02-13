@@ -27,7 +27,6 @@ def run():
             clubs = row['Clubs'],
             epa = row['EPA'],
             total = row['Total'],
-            creation_date = datetime.now()
         )
         Clubs.append(obj)
 
