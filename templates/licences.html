@@ -1,0 +1,149 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <title>Player Information</title>
+</head>
+<body>
+    <div class="container">
+        <div class="parent">
+            <img src="{% static 'images/01-Logo-Walden-Color.png' %}" class="div1">
+            <h1 class="div2">Player Information</h1>
+            <p class="div3">Nombre de lignes dans app_player : {{ players.paginator.count }}</p>
+        </div>
+        <div class="table-responsive" >
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Code Commune</th>
+                        <th>Commune</th>
+                        <th>Code QPV</th>
+                        <th>Nom QPV</th>
+                        <th>Département</th>
+                        <th>Région</th>
+                        <th>Statut Géo</th>
+                        <th>Code</th>
+                        <th>Fédération</th>
+                        <th>F - 1 à 4 ans</th>
+                        <th>F - 5 à 9 ans</th>
+                        <th>F - 10 à 14 ans</th>
+                        <th>F - 15 à 19 ans</th>
+                        <th>F - 20 à 24 ans</th>
+                        <th>F - 25 à 29 ans</th>
+                        <th>F - 30 à 34 ans</th>
+                        <th>F - 35 à 39 ans</th>
+                        <th>F - 40 à 44 ans</th>
+                        <th>F - 45 à 49 ans</th>
+                        <th>F - 50 à 54 ans</th>
+                        <th>F - 55 à 59 ans</th>
+                        <th>F - 60 à 64 ans</th>
+                        <th>F - 65 à 69 ans</th>
+                        <th>F - 70 à 74 ans</th>
+                        <th>F - 75 à 79 ans</th>
+                        <th>F - 80 à 99 ans</th>
+                        <th>F - NR</th>
+                        <th>H - 1 à 4 ans</th>
+                        <th>H - 5 à 9 ans</th>
+                        <th>H - 10 à 14 ans</th>
+                        <th>H - 15 à 19 ans</th>
+                        <th>H - 20 à 24 ans</th>
+                        <th>H - 25 à 29 ans</th>
+                        <th>H - 30 à 34 ans</th>
+                        <th>H - 35 à 39 ans</th>
+                        <th>H - 40 à 44 ans</th>
+                        <th>H - 45 à 49 ans</th>
+                        <th>H - 50 à 54 ans</th>
+                        <th>H - 55 à 59 ans</th>
+                        <th>H - 60 à 64 ans</th>
+                        <th>H - 65 à 69 ans</th>
+                        <th>H - 70 à 74 ans</th>
+                        <th>H - 75 à 79 ans</th>
+                        <th>H - 80 à 99 ans</th>
+                        <th>H - NR</th>
+                        <th>NR - NR</th>
+                        <th>Total</th>
+                        <th>Création Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for player in players %}
+                    <tr>
+                        <td>{{ player.code_commune }}</td>
+                        <td>{{ player.commune }}</td>
+                        <td>{{ player.code_qpv }}</td>
+                        <td>{{ player.nom_qpv }}</td>
+                        <td>{{ player.departement }}</td>
+                        <td>{{ player.region }}</td>
+                        <td>{{ player.statut_geo }}</td>
+                        <td>{{ player.code }}</td>
+                        <td>{{ player.federation }}</td>
+                        <td>{{ player.f_1_4_ans }}</td>
+                        <td>{{ player.f_5_9_ans }}</td>
+                        <td>{{ player.f_10_14_ans }}</td>
+                        <td>{{ player.f_15_19_ans }}</td>
+                        <td>{{ player.f_20_24_ans }}</td>
+                        <td>{{ player.f_25_29_ans }}</td>
+                        <td>{{ player.f_30_34_ans }}</td>
+                        <td>{{ player.f_35_39_ans }}</td>
+                        <td>{{ player.f_40_44_ans }}</td>
+                        <td>{{ player.f_45_49_ans }}</td>
+                        <td>{{ player.f_50_54_ans }}</td>
+                        <td>{{ player.f_55_59_ans }}</td>
+                        <td>{{ player.f_60_64_ans }}</td>
+                        <td>{{ player.f_65_69_ans }}</td>
+                        <td>{{ player.f_70_74_ans }}</td>
+                        <td>{{ player.f_75_79_ans }}</td>
+                        <td>{{ player.f_80_99_ans }}</td>
+                        <td>{{ player.f_nr }}</td>
+                        <td>{{ player.h_1_4_ans }}</td>
+                        <td>{{ player.h_5_9_ans }}</td>
+                        <td>{{ player.h_10_14_ans }}</td>
+                        <td>{{ player.h_15_19_ans }}</td>
+                        <td>{{ player.h_20_24_ans }}</td>
+                        <td>{{ player.h_25_29_ans }}</td>
+                        <td>{{ player.h_30_34_ans }}</td>
+                        <td>{{ player.h_35_39_ans }}</td>
+                        <td>{{ player.h_40_44_ans }}</td>
+                        <td>{{ player.h_45_49_ans }}</td>
+                        <td>{{ player.h_50_54_ans }}</td>
+                        <td>{{ player.h_55_59_ans }}</td>
+                        <td>{{ player.h_60_64_ans }}</td>
+                        <td>{{ player.h_65_69_ans }}</td>
+                        <td>{{ player.h_70_74_ans }}</td>
+                        <td>{{ player.h_75_79_ans }}</td>
+                        <td>{{ player.h_80_99_ans }}</td>
+                        <td>{{ player.h_nr }}</td>
+                        <td>{{ player.nr_nr }}</td>
+                        <td>{{ player.total }}</td>
+                        <td>{{ player.creation_date }}</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <!-- Ajouter la pagination -->
+        <div class="d-flex justify-content-center">
+            <ul class="pagination">
+                {% if players.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ players.previous_page_number }}">{{ players.previous_page_number }}</a></li>
+                {% endif %}
+
+                <li class="page-item active"><span class="page-link">{{ players.number }}</span></li>
+
+                {% if players.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ players.next_page_number }}">{{ players.next_page_number }}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ players.paginator.num_pages }}">&raquo;&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Ajouter le script Bootstrap JS après le corps du document -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

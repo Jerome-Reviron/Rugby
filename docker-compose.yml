@@ -1,0 +1,21 @@
+version: '3'
+
+services:
+  web:
+    build: .
+    command: bash -c "python manage.py makemigrations && python manage.py migrate && python manage.py runserver 0.0.0.0:8000"
+    container_name: WEB
+    volumes: 
+      - .:/app-root
+    ports:
+      - "8000:8000"
+    
+  # database:
+  #   container_name: oracle-std-service-container_name
+  #   image: container-registry.oracle.com/database/enterprise:21.3.0.0
+  #   environment:
+  #       ORACLE_SID: XE
+  #       ORACLE_PDB: PDB1
+  #       ORACLE_PWD: root
+  #   ports:
+  #     - "1521:1521"

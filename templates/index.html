@@ -1,0 +1,75 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{% static 'styles.css' %}">
+    <title>Club Information</title>
+</head>
+<body>
+    <div class="container">
+        <div class="parent">
+            <img src="{% static 'images/01-Logo-Walden-Color.png' %}" class="div1">
+            <h1 class="div2">Club Information</h1>
+            <p class="div3">Nombre de lignes dans app_club : {{ clubs.paginator.count }}</p>
+        </div>        
+        <table class="table table-bordered">
+            <thead>
+                <tr>
+                    <th>Code QPV</th>
+                    <th>Commune</th>
+                    <th>Code Département</th>
+                    <th>Région</th>
+                    <th>Statut Géo</th>
+                    <th>Code</th>
+                    <th>Fédération</th>
+                    <th>Clubs</th>
+                    <th>EPA</th>
+                    <th>Total</th>
+                    <th>Création Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for club in clubs %}
+                <tr>
+                    <td>{{ club.code_qpv }}</td>
+                    <td>{{ club.commune }}</td>
+                    <td>{{ club.departement }}</td>
+                    <td>{{ club.region }}</td>
+                    <td>{{ club.statut_geo }}</td>
+                    <td>{{ club.code }}</td>
+                    <td>{{ club.federation }}</td>
+                    <td>{{ club.clubs }}</td>
+                    <td>{{ club.epa }}</td>
+                    <td>{{ club.total }}</td>
+                    <td>{{ club.creation_date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <!-- Ajouter la pagination -->
+        <div class="d-flex justify-content-center">
+            <ul class="pagination">
+                {% if clubs.has_previous %}
+                    <li class="page-item"><a class="page-link" href="?page=1">&laquo;&laquo;</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ clubs.previous_page_number }}">{{ clubs.previous_page_number }}</a></li>
+                {% endif %}
+
+                <li class="page-item active"><span class="page-link">{{ clubs.number }}</span></li>
+
+                {% if clubs.has_next %}
+                    <li class="page-item"><a class="page-link" href="?page={{ clubs.next_page_number }}">{{ clubs.next_page_number }}</a></li>
+                    <li class="page-item"><a class="page-link" href="?page={{ clubs.paginator.num_pages }}">&raquo;&raquo;</a></li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+
+    <!-- Ajouter le script Bootstrap JS après le corps du document -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
+
