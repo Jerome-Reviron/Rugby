@@ -2,7 +2,11 @@ import pandas as pd
 from django.db import IntegrityError
 from app.models import Club, D_ETABLISHEMENT
 
+global_counter = 1
+
 def run():
+    global global_counter  # Déclarer la variable comme globale
+
     print("Chargement des données de la classe Club...")
     # Charger les données de la classe Club dans un DataFrame Pandas
     club_data = Club.objects.values()
@@ -15,18 +19,31 @@ def run():
         D_ETABLISHEMENT.objects.all().delete()
         print("Anciennes données effacées avant insertion!")
 
+        # Ajouter la colonne 'EtablishementLabel' au DataFrame
+        df_club['EtablishementLabel'] = df_club.apply(get_etablishment_label, axis=1)
+        df_club['EtablishementLabel'] = df_club.apply(get_etablishment_label, axis=1)
+        df_club['Nombre'] = df_club.apply(get_nombre_value, axis=1)
+
         # Utiliser bulk_create pour insérer les objets D_ETABLISHEMENT en une seule requête
         D_ETABLISHEMENT.objects.bulk_create([
             D_ETABLISHEMENT(
-                EtablishementLabel=get_etablishment_label(row),
-                Nombre=get_nombre_value(row),
+                Etablishement_id=get_etablishment_id(row, global_counter),
+                EtablishementLabel=row['EtablishementLabel'],
+                Nombre=row['Nombre'],
             )
-            for index, row in df_club.iterrows()
+            for _, row in df_club.iterrows()
         ])
 
         print("Script terminé avec succès!")
     except IntegrityError as e:
         print(f"Erreur lors de l'insertion des données : {e}")
+
+# Fonction pour obtenir l'ETABLISHEMENT_ID avec un chiffre incrémenté
+def get_etablishment_id(row, counter):
+    global global_counter  # Accéder à la variable globale
+    result = f"{counter}-{row['EtablishementLabel']}-{row['Nombre']}"
+    global_counter += 1
+    return result
 
 def get_etablishment_label(row):
     clubs = int(row['clubs']) if 'clubs' in row else 0
