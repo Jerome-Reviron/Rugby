@@ -87,15 +87,22 @@ class Player(models.Model):
         return f"{self.code_qpv} - {self.code} - {self.federation}"
 
 class D_CLUB(models.Model):
+    code_code_qpv_code_commune = models.CharField(max_length=100, unique=True, blank=True, null=True)
     code = models.IntegerField()
     code_qpv = models.CharField(max_length=20, blank=True, null=True, default=None)
     nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
     federation = models.CharField(max_length=255, blank=True, null=True, default=None)
     region = models.CharField(max_length=255, blank=True, null=True, default=None)
     departement = models.CharField(max_length=255, blank=True, null=True, default=None)
+    nom_departement = models.CharField(max_length=255, blank=True, null=True, default=None)
     code_commune = models.CharField(max_length=20, blank=True, null=True, default=None)
     commune = models.CharField(max_length=150, blank=True, null=True, default=None)
     statut_geo = models.CharField(max_length=20, blank=True, null=True, default=None)
+
+    def save(self, *args, **kwargs):
+        # Concaténer les champs pour créer la clé primaire
+        self.code_code_qpv_code_commune = f"{self.code}-{self.code_qpv}-{self.code_commune}"
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"{self.code} - {self.code_qpv} - {self.commune}"
