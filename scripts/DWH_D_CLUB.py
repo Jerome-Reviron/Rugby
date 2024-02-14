@@ -1,26 +1,39 @@
 import pandas as pd
-from app.models import D_CLUB, Club
+from django.db import IntegrityError
+from app.models import Club, D_CLUB
 
-# Tronquer la table D_CLUB
-D_CLUB.objects.all().delete()
+def run():
+    print("Chargement des données de la classe Club...")
+    # Charger les données de la classe Club dans un DataFrame Pandas
+    club_data = Club.objects.values()
+    df_club = pd.DataFrame.from_records(club_data)
 
-# Récupérer les données distinctes de la table Club pour les colonnes nécessaires
-club_data = Club.objects.values(
-    'code', 'nom_qpv', 'federation', 'region', 'departement', 'code_commune', 'commune', 'statut_geo'
-).distinct()
+    print(f"Nombre de lignes à insérer dans la table D_CLUB : {len(df_club)}")
 
-# Convertir les données en DataFrames pandas
-df_club = pd.DataFrame(club_data)
+    try:
+        # Supprimer toutes les données de la table D_CLUB avant l'insertion
+        D_CLUB.objects.all().delete()
+        print("Anciennes données effacées avant insertion!")
 
-# Insérer les données dans la table D_CLUB
-for _, row in df_club.iterrows():
-    D_CLUB.objects.create(
-        code=row['code'],
-        nom_qpv=row['nom_qpv'],
-        federation=row['federation'],
-        region=row['region'],
-        departement=row['departement'],
-        code_commune=row['code_commune'],
-        commune=row['commune'],
-        statut_geo=row['statut_geo']
-    )
+        # Utiliser bulk_create pour insérer les objets D_CLUB en une seule requête
+        D_CLUB.objects.bulk_create([
+            D_CLUB(
+                code=row['code'],
+                code_qpv=row['code_qpv'],
+                nom_qpv=row['nom_qpv'],
+                federation=row['federation'],
+                region=row['region'],
+                departement=row['departement'],
+                code_commune=row['code_commune'],
+                commune=row['commune'],
+                statut_geo=row['statut_geo'],
+            )
+            for index, row in df_club.iterrows()
+        ])
+
+        print("Script terminé avec succès!")
+    except IntegrityError as e:
+        print(f"Erreur lors de l'insertion des données : {e}")
+
+if __name__ == "__main__":
+    run()

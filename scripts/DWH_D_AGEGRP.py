@@ -1,25 +1,47 @@
 import pandas as pd
-# Importez le modèle D_AGEGRP depuis le fichier models.py
+from django.db import IntegrityError
 from app.models import Player, D_AGEGRP
 
-# Tronquer la table D_AGEGRP
-D_AGEGRP.objects.all().delete()
+def run():
+    print("Chargement des données de la classe Player...")
+    # Charger les données de la classe Player dans un DataFrame Pandas
+    player_data = Player.objects.values()
+    df_player = pd.DataFrame.from_records(player_data)
 
-# Liste des colonnes correspondant aux tranches d'âge dans le modèle Player
-age_columns = [
-    'f_1_4_ans', 'f_5_9_ans', 'f_10_14_ans', 'f_15_19_ans', 'f_20_24_ans',
-    'f_25_29_ans', 'f_30_34_ans', 'f_35_39_ans', 'f_40_44_ans', 'f_45_49_ans',
-    'f_50_54_ans', 'f_55_59_ans', 'f_60_64_ans', 'f_65_69_ans', 'f_70_74_ans',
-    'f_75_79_ans', 'f_80_99_ans', 'f_nr', 'h_1_4_ans', 'h_5_9_ans', 'h_10_14_ans',
-    'h_15_19_ans', 'h_20_24_ans', 'h_25_29_ans', 'h_30_34_ans', 'h_35_39_ans',
-    'h_40_44_ans', 'h_45_49_ans', 'h_50_54_ans', 'h_55_59_ans', 'h_60_64_ans',
-    'h_65_69_ans', 'h_70_74_ans', 'h_75_79_ans', 'h_80_99_ans', 'h_nr', 'nr_nr',
-]
+    print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_player)}")
 
-# Insérer les données dans la table D_AGEGRP
-for column in age_columns:
-    # Extraire le libellé de la tranche d'âge à partir du nom de la colonne
-    age_label = column.split('_')[1]  # Par exemple, 'f_1_4_ans' devient '1_4_ans'
+    try:
+        # Créer une liste unique de noms de colonnes
+        unique_columns = set()
+        for column in df_player.columns:
+            # Extraire le label d'âge à partir des noms de colonnes
+            agegrp_label = get_agegrp_label(column)
+            if agegrp_label:
+                unique_columns.add(agegrp_label)
 
-    # Insérer la tranche d'âge et le libellé correspondant dans la table D_AGEGRP
-    D_AGEGRP.objects.create(AgeGrpLabel=age_label)
+        # Supprimer toutes les données de la table D_AGEGRP avant l'insertion
+        D_AGEGRP.objects.all().delete()
+        print("Anciennes données effacées avant insertion!")
+
+        # Utiliser bulk_create pour insérer les objets D_AGEGRP en une seule requête
+        D_AGEGRP.objects.bulk_create([
+            D_AGEGRP(
+                AgeGrpLabel=agegrp_label
+            )
+            for agegrp_label in unique_columns
+        ])
+
+        print("Script terminé avec succès!")
+    except IntegrityError as e:
+        print(f"Erreur lors de l'insertion des données : {e}")
+
+def get_agegrp_label(column):
+    # Logique pour extraire la partie après le premier '_' et avant 'ans' dans le nom de la colonne
+    parts = column.split('_')
+    if len(parts) > 1 and parts[-1] == 'ans':
+        return f"_{parts[1]}_{parts[2]}_{parts[3]}_ans"
+    else:
+        return None
+
+if __name__ == "__main__":
+    run()

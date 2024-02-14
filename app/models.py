@@ -87,7 +87,6 @@ class Player(models.Model):
         return f"{self.code_qpv} - {self.code} - {self.federation}"
 
 class D_CLUB(models.Model):
-    code_code_qpv_code_commune = models.CharField(max_length=100, primary_key=True, default='0')
     code = models.IntegerField()
     code_qpv = models.CharField(max_length=20, blank=True, null=True, default=None)
     nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
@@ -97,11 +96,6 @@ class D_CLUB(models.Model):
     code_commune = models.CharField(max_length=20, blank=True, null=True, default=None)
     commune = models.CharField(max_length=150, blank=True, null=True, default=None)
     statut_geo = models.CharField(max_length=20, blank=True, null=True, default=None)
-
-    def save(self, *args, **kwargs):
-        # Concaténer les champs pour créer la clé primaire
-        self.code_code_qpv_code_commune = f"{self.code}-{self.code_qpv}-{self.code_commune}"
-        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return f"{self.code} - {self.code_qpv} - {self.commune}"
@@ -113,8 +107,11 @@ class D_AGEGRP(models.Model):
     AgeGrpLabel = models.CharField(max_length=15, primary_key=True)
 
 class D_ETABLISHEMENT(models.Model):
-    EtablishementLabel = models.CharField(max_length=10, primary_key=True)
-    Nombre = models.IntegerField()
+    EtablishementLabel = models.CharField(max_length=10, blank=True, null=True, default=None)
+    Nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
+
+    def __str__(self) -> str:
+        return f"{self.EtablishementLabel} - {self.Nombre}"
 
 class D_DATE(models.Model):
     Date = models.DateField(primary_key=True)
@@ -125,4 +122,5 @@ class F_PLAYER(models.Model):
     D_CLUB_FK = models.ForeignKey('D_CLUB', on_delete=models.CASCADE)
     D_DATE_FK = models.ForeignKey('D_DATE', on_delete=models.CASCADE)
     D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
-    Total = models.IntegerField()
+    Total_Club = models.IntegerField()
+    Total_Player = models.IntegerField()
