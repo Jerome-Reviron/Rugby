@@ -12,24 +12,23 @@ def run():
     club_data = Club.objects.values()
     df_club = pd.DataFrame.from_records(club_data)
 
-    print(f"Nombre de lignes à insérer dans la table D_ETABLISHEMENT : {len(df_club)}")
+    print(f"nombre de lignes à insérer dans la table D_ETABLISHEMENT : {len(df_club)}")
 
     try:
         # Supprimer toutes les données de la table D_ETABLISHEMENT avant l'insertion
         D_ETABLISHEMENT.objects.all().delete()
         print("Anciennes données effacées avant insertion!")
 
-        # Ajouter la colonne 'EtablishementLabel' au DataFrame
-        df_club['EtablishementLabel'] = df_club.apply(get_etablishment_label, axis=1)
-        df_club['EtablishementLabel'] = df_club.apply(get_etablishment_label, axis=1)
-        df_club['Nombre'] = df_club.apply(get_nombre_value, axis=1)
+        # Ajouter la colonne 'etablishementlabel' au DataFrame
+        df_club['etablishementlabel'] = df_club.apply(get_etablishment_label, axis=1)
+        df_club['nombre'] = df_club.apply(get_nombre_value, axis=1)
 
         # Utiliser bulk_create pour insérer les objets D_ETABLISHEMENT en une seule requête
         D_ETABLISHEMENT.objects.bulk_create([
             D_ETABLISHEMENT(
-                Etablishement_id=get_etablishment_id(row, global_counter),
-                EtablishementLabel=row['EtablishementLabel'],
-                Nombre=row['Nombre'],
+                etablishement_id=get_etablishment_id(row, global_counter),
+                etablishementlabel=row['etablishementlabel'],
+                nombre=row['nombre'],
             )
             for _, row in df_club.iterrows()
         ])
@@ -41,7 +40,7 @@ def run():
 # Fonction pour obtenir l'ETABLISHEMENT_ID avec un chiffre incrémenté
 def get_etablishment_id(row, counter):
     global global_counter  # Accéder à la variable globale
-    result = f"{counter}-{row['EtablishementLabel']}-{row['Nombre']}"
+    result = f"{counter}-{row['etablishementlabel']}-{row['nombre']}"
     global_counter += 1
     return result
 

@@ -108,24 +108,22 @@ class D_CLUB(models.Model):
         return f"{self.code} - {self.code_qpv} - {self.commune}"
 
 class D_SEX(models.Model):
-    SexCode = models.CharField(max_length=5, primary_key=True)
+    sexcode = models.CharField(max_length=5, primary_key=True)
 
 class D_AGEGRP(models.Model):
-    AgeGrpLabel = models.CharField(max_length=15, primary_key=True)
-
-from django.db import models
+    agegrplabel = models.CharField(max_length=15, primary_key=True)
 
 class D_ETABLISHEMENT(models.Model):
-    Etablishement_id = models.CharField(max_length=20, blank=True, null=True, default=None)
-    EtablishementLabel = models.CharField(max_length=10, blank=True, null=True, default=None)
-    Nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
+    etablishement_id = models.CharField(max_length=20, blank=True, null=True, default=None)
+    etablishementlabel = models.CharField(max_length=10, blank=True, null=True, default=None)
+    nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
 
     def __str__(self) -> str:
         return f"{self.EtablishementLabel} - {self.Nombre}"
 
 
 class D_DATE(models.Model):
-    Date = models.DateField(primary_key=True)
+    date = models.DateField(primary_key=True)
 
 class F_PLAYER(models.Model):
     D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
