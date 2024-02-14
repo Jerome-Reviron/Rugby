@@ -17,7 +17,7 @@ def run():
             # Utilisez bulk_create pour insérer l'objet D_DATE en une seule requête pour chaque année
             D_DATE.objects.bulk_create([
                 D_DATE(
-                    Date=date(year, 1, 1)  # Utilisez date() pour créer un objet date
+                    date=date(year, 1, 1)  # Utilisez date() pour créer un objet date
                 )
                 for year in years
             ])

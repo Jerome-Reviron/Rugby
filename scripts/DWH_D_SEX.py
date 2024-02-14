@@ -26,7 +26,7 @@ def run():
         # Utiliser bulk_create pour insérer les objets D_SEX en une seule requête
         D_SEX.objects.bulk_create([
             D_SEX(
-                SexCode=sex_code
+                sexcode=sex_code
             )
             for sex_code in unique_columns
         ])

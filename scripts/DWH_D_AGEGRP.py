@@ -26,7 +26,7 @@ def run():
         # Utiliser bulk_create pour insérer les objets D_AGEGRP en une seule requête
         D_AGEGRP.objects.bulk_create([
             D_AGEGRP(
-                AgeGrpLabel=agegrp_label
+                agegrplabel=agegrp_label
             )
             for agegrp_label in unique_columns
         ])
