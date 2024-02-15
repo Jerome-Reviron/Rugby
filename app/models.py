@@ -110,20 +110,28 @@ class D_CLUB(models.Model):
 class D_SEX(models.Model):
     sexcode = models.CharField(max_length=5, primary_key=True)
 
+    def __str__(self) -> str:
+        return f"{self.sexcode}"
+
 class D_AGEGRP(models.Model):
     agegrplabel = models.CharField(max_length=15, primary_key=True)
 
+    def __str__(self) -> str:
+        return f"{self.agegrplabel}"
+
 class D_ETABLISHEMENT(models.Model):
-    etablishement_id = models.CharField(max_length=20, blank=True, null=True, default=None)
+    etablishement_id = models.CharField(max_length=20, primary_key=True)
     etablishementlabel = models.CharField(max_length=10, blank=True, null=True, default=None)
     nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
 
     def __str__(self) -> str:
-        return f"{self.EtablishementLabel} - {self.Nombre}"
-
+        return f"{self.etablishementlabel} - {self.nombre}"
 
 class D_DATE(models.Model):
     date = models.DateField(primary_key=True)
+
+    def __str__(self) -> str:
+        return f"{self.date}"
 
 class F_PLAYER(models.Model):
     D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
@@ -133,3 +141,5 @@ class F_PLAYER(models.Model):
     D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
     Total_Club = models.IntegerField()
     Total_Player = models.IntegerField()
+    date_table = models.DateField()
+

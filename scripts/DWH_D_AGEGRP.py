@@ -4,10 +4,8 @@ from app.models import Player, D_AGEGRP
 
 def run():
     print("Chargement des données de la classe Player...")
-    # Charger les données de la classe Player dans un DataFrame Pandas
     player_data = Player.objects.values()
     df_player = pd.DataFrame.from_records(player_data)
-
     print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_player)}")
 
     try:

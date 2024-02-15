@@ -1,12 +1,47 @@
 import pandas as pd
 from django.db import IntegrityError
-from app.models import F_PLAYER, D_SEX, D_AGEGRP, D_CLUB, D_DATE, D_ETABLISHEMENT
+from app.models import F_PLAYER, D_SEX, D_AGEGRP, D_CLUB, D_DATE, D_ETABLISHEMENT, Player, Club
 
 def run():
-    print("Chargement des données de la classe F_PLAYER...")
-    # Charger les données de la classe F_PLAYER dans un DataFrame Pandas
-    f_player_data = F_PLAYER.objects.values()
-    df_f_player = pd.DataFrame.from_records(f_player_data)
+    print("Chargement des données...")
+    # Charger les données des classes dimensionnelles dans des DataFrames Pandas
+    player_data = Player.objects.values()
+    df_player = pd.DataFrame.from_records(player_data)
+    print("Colonnes dans le DataFrame 'Player' : ", df_player.columns)
+
+    club_data = Club.objects.values()
+    df_club = pd.DataFrame.from_records(club_data)
+    print("Colonnes dans le DataFrame 'Club' : ", df_club.columns)
+
+    d_sex_data = D_SEX.objects.values()
+    df_d_sex = pd.DataFrame.from_records(d_sex_data)
+    print("Colonnes dans le DataFrame 'D_SEX' : ", df_d_sex.columns)
+
+    d_agegrp_data = D_AGEGRP.objects.values()
+    df_d_agegrp = pd.DataFrame.from_records(d_agegrp_data)
+    print("Colonnes dans le DataFrame 'D_AGEGRP' : ", df_d_agegrp.columns)
+
+    d_club_data = D_CLUB.objects.values()
+    df_d_club = pd.DataFrame.from_records(d_club_data)
+    print("Colonnes dans le DataFrame 'D_CLUB' : ", df_d_club.columns)
+
+    d_date_data = D_DATE.objects.values()
+    df_d_date = pd.DataFrame.from_records(d_date_data)
+    print("Colonnes dans le DataFrame 'D_DATE' : ", df_d_date.columns)
+
+    d_etablissement_data = D_ETABLISHEMENT.objects.values()
+    df_d_etablissement = pd.DataFrame.from_records(d_etablissement_data)
+    print("Colonnes dans le DataFrame 'D_ETABLISHEMENT' : ", df_d_etablissement.columns)
+
+    df_f_player = pd.DataFrame()
+
+    # Remplir df_f_player en joignant les DataFrames dimensionnels
+    # (remplacer 'key' par la clé appropriée pour chaque fusion)
+    df_f_player = pd.merge(df_player, df_d_sex, on='sexcode', how='inner')
+    df_f_player = pd.merge(df_f_player, df_d_agegrp, on='agegrplabel', how='inner')
+    df_f_player = pd.merge(df_f_player, df_d_club, on='code_code_qpv_code_commune', how='inner')
+    df_f_player = pd.merge(df_f_player, df_d_date, on='date', how='inner')
+    df_f_player = pd.merge(df_f_player, df_d_etablissement, on='etablishement_id', how='inner')
 
     print(f"Nombre de lignes à insérer dans la table F_PLAYER : {len(df_f_player)}")
 
@@ -15,42 +50,17 @@ def run():
         F_PLAYER.objects.all().delete()
         print("Anciennes données effacées avant insertion!")
 
-        # Charger les données des autres classes
-        d_sex_data = D_SEX.objects.values()
-        df_d_sex = pd.DataFrame.from_records(d_sex_data)
-
-        # Fusionner les DataFrames
-        df_f_player = pd.merge(df_f_player, df_d_sex, left_on='SexCode', right_on='SexCode', how='left')
-
-        d_agegrp_data = D_AGEGRP.objects.values()
-        df_d_agegrp = pd.DataFrame.from_records(d_agegrp_data)
-        df_f_player = pd.merge(df_f_player, df_d_agegrp, left_on='AgeGrpLabel', right_on='AgeGrpLabel', how='left')
-
-        d_club_data = D_CLUB.objects.values()
-        df_d_club = pd.DataFrame.from_records(d_club_data)
-        df_f_player = pd.merge(df_f_player, df_d_club, left_on='ClubCode', right_on='code_code_qpv_code_commune', how='left')
-
-        d_date_data = D_DATE.objects.values()
-        df_d_date = pd.DataFrame.from_records(d_date_data)
-        df_f_player = pd.merge(df_f_player, df_d_date, left_on='Date', right_on='Date', how='left')
-
-        d_etablissement_data = D_ETABLISHEMENT.objects.values()
-        df_d_etablissement = pd.DataFrame.from_records(d_etablissement_data)
-        df_f_player = pd.merge(df_f_player, df_d_etablissement, left_on='EtablishementLabel', right_on='EtablishementLabel', how='left')
-
-        # Supprimer les colonnes inutiles
-        df_f_player = df_f_player.drop(['SexCode', 'AgeGrpLabel', 'ClubCode', 'Date', 'EtablishementLabel'], axis=1)
-
         # Utiliser bulk_create pour insérer les objets F_PLAYER en une seule requête
         F_PLAYER.objects.bulk_create([
             F_PLAYER(
-                D_SEX_FK_id=row['SexCode'],
-                D_AGEGRP_FK_id=row['AgeGrpLabel'],
-                D_CLUB_FK_id=row['ClubCode'],
-                D_DATE_FK_id=row['Date'],
-                D_ETABLISHEMENT_FK_id=row['EtablishementLabel'],
+                D_SEX_FK_id=row['sexcode'],
+                D_AGEGRP_FK_id=row['agegrplabel'],
+                D_CLUB_FK_id=row['code_code_qpv_code_commune'],
+                D_DATE_FK_id=row['date'],
+                D_ETABLISHEMENT_FK_id=row['etablishement_id'],
                 Total_Club=row['Total_Club'],
-                Total_Player=row['Total_Player']
+                Total_Player=row['Total_Player'],
+                date_table=row['date_table']
             )
             for _, row in df_f_player.iterrows()
         ])

@@ -11,7 +11,6 @@ def run():
     # Charger les données de la classe Club dans un DataFrame Pandas
     club_data = Club.objects.values()
     df_club = pd.DataFrame.from_records(club_data)
-
     print(f"nombre de lignes à insérer dans la table D_ETABLISHEMENT : {len(df_club)}")
 
     try:

@@ -3,7 +3,7 @@ import sqlite3
 def drop_table():
     conn = sqlite3.connect('db.sqlite3')
     cur = conn.cursor()
-    cur.execute('DROP TABLE app_d_club')
+    cur.execute('DROP TABLE app_f_player')
     conn.commit()
     conn.close()
 drop_table()

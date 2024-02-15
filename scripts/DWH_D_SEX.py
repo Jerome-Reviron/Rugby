@@ -7,7 +7,6 @@ def run():
     # Charger les données de la classe Player dans un DataFrame Pandas
     player_data = Player.objects.values()
     df_player = pd.DataFrame.from_records(player_data)
-
     print(f"Nombre de lignes à insérer dans la table D_SEX : {len(df_player)}")
 
     try:
@@ -37,7 +36,6 @@ def run():
 
 def get_sex_code(column):
     # Logique pour extraire le code de sexe à partir des noms de colonnes
-    # Ajoutez la logique nécessaire ici, par exemple en utilisant des conditions if
     if 'f' in column.lower():
         return 'f'
     elif 'h' in column.lower():
