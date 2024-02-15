@@ -5,7 +5,7 @@ from app.models import Club, D_CLUB
 def run():
     print("Chargement des données de la classe Club...")
     # Charger les données de la classe Club dans un DataFrame Pandas
-    club_data = Club.objects.exclude(code_commune="NR - Non réparti").values()
+    club_data = Club.objects.values()
     df_club = pd.DataFrame.from_records(club_data)
 
     print(f"Nombre de lignes à insérer dans la table D_CLUB : {len(df_club)}")
@@ -26,7 +26,6 @@ def run():
                 federation=row['federation'],
                 region=row['region'],
                 departement=row['departement'],
-                nom_departement=row.get('nom_departement', ''),
                 code_commune=row['code_commune'],
                 commune=row['commune'],
                 statut_geo=row['statut_geo'],

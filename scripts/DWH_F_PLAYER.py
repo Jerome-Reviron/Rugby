@@ -50,6 +50,32 @@ def run():
         F_PLAYER.objects.all().delete()
         print("Anciennes données effacées avant insertion!")
 
+        # Charger les données des autres classes
+        d_sex_data = D_SEX.objects.values()
+        df_d_sex = pd.DataFrame.from_records(d_sex_data)
+
+        # Fusionner les DataFrames
+        df_f_player = pd.merge(df_f_player, df_d_sex, left_on='SexCode', right_on='SexCode', how='left')
+
+        d_agegrp_data = D_AGEGRP.objects.values()
+        df_d_agegrp = pd.DataFrame.from_records(d_agegrp_data)
+        df_f_player = pd.merge(df_f_player, df_d_agegrp, left_on='AgeGrpLabel', right_on='AgeGrpLabel', how='left')
+
+        d_club_data = D_CLUB.objects.values()
+        df_d_club = pd.DataFrame.from_records(d_club_data)
+        df_f_player = pd.merge(df_f_player, df_d_club, left_on='ClubCode', right_on='code_code_qpv_code_commune', how='left')
+
+        d_date_data = D_DATE.objects.values()
+        df_d_date = pd.DataFrame.from_records(d_date_data)
+        df_f_player = pd.merge(df_f_player, df_d_date, left_on='Date', right_on='Date', how='left')
+
+        d_etablissement_data = D_ETABLISHEMENT.objects.values()
+        df_d_etablissement = pd.DataFrame.from_records(d_etablissement_data)
+        df_f_player = pd.merge(df_f_player, df_d_etablissement, left_on='EtablishementLabel', right_on='EtablishementLabel', how='left')
+
+        # Supprimer les colonnes inutiles
+        df_f_player = df_f_player.drop(['SexCode', 'AgeGrpLabel', 'ClubCode', 'Date', 'EtablishementLabel'], axis=1)
+
         # Utiliser bulk_create pour insérer les objets F_PLAYER en une seule requête
         F_PLAYER.objects.bulk_create([
             F_PLAYER(

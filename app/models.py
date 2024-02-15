@@ -132,7 +132,6 @@ class D_DATE(models.Model):
 
     def __str__(self) -> str:
         return f"{self.date}"
-
 class F_PLAYER(models.Model):
     D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
     D_AGEGRP_FK = models.ForeignKey('D_AGEGRP', on_delete=models.CASCADE)
