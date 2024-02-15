@@ -86,34 +86,59 @@ class Player(models.Model):
     def __str__(self) -> str:
         return f"{self.code_qpv} - {self.code} - {self.federation}"
 
-# Table de fait
-class F_CLUB(models.Model):
-    F_code = models.CharField(max_length=255, primary_key=True)
-    D_QPV_FK = models.ForeignKey('D_QPV', on_delete=models.CASCADE)
-    D_CODE_COMMUNE_FK = models.ForeignKey('D_COMMUNE', on_delete=models.CASCADE)
-    D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
-    D_AGEGRP_FK = models.ForeignKey('D_AGEGRP', on_delete=models.CASCADE)
+class D_CLUB(models.Model):
+    code_code_qpv_code_commune = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    code = models.IntegerField()
+    code_qpv = models.CharField(max_length=20, blank=True, null=True, default=None)
+    nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
     federation = models.CharField(max_length=255, blank=True, null=True, default=None)
-    nb_epa = models.IntegerField(default=None)
-    nb_club = models.IntegerField(default=None)
-    total_value = models.IntegerField(default=None)
+    region = models.CharField(max_length=255, blank=True, null=True, default=None)
+    departement = models.CharField(max_length=255, blank=True, null=True, default=None)
+    nom_departement = models.CharField(max_length=255, blank=True, null=True, default=None)
+    code_commune = models.CharField(max_length=20, blank=True, null=True, default=None)
+    commune = models.CharField(max_length=150, blank=True, null=True, default=None)
+    statut_geo = models.CharField(max_length=20, blank=True, null=True, default=None)
 
-# Tables de dimensions
+    def save(self, *args, **kwargs):
+        # Concaténer les champs pour créer la clé primaire
+        self.code_code_qpv_code_commune = f"{self.code}-{self.code_qpv}-{self.code_commune}"
+        super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return f"{self.code} - {self.code_qpv} - {self.commune}"
+
 class D_SEX(models.Model):
-    sexcode = models.CharField(max_length=255, primary_key=True)
+    sexcode = models.CharField(max_length=5, primary_key=True)
+
+    def __str__(self) -> str:
+        return f"{self.sexcode}"
 
 class D_AGEGRP(models.Model):
-    AgeGrpLabel = models.CharField(max_length=255, primary_key=True)
+    agegrplabel = models.CharField(max_length=15, primary_key=True)
 
-class D_GEOPOSITION(models.Model):
-    region = models.CharField(max_length=255, primary_key=True)
-    departement = models.CharField(max_length=255, blank=True, null=True, default=None)
-    statut_geo = models.CharField(max_length=255, blank=True, null=True, default=None)
+    def __str__(self) -> str:
+        return f"{self.agegrplabel}"
 
-class D_COMMUNE(models.Model):
-    code_commune = models.CharField(max_length=255, primary_key=True)
-    commune = models.CharField(max_length=255, blank=True, null=True, default=None)
+class D_ETABLISHEMENT(models.Model):
+    etablishement_id = models.CharField(max_length=20, primary_key=True)
+    etablishementlabel = models.CharField(max_length=10, blank=True, null=True, default=None)
+    nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
 
-class D_QPV(models.Model):
-    code_qpv = models.CharField(max_length=255, primary_key=True)
-    nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
+    def __str__(self) -> str:
+        return f"{self.etablishementlabel} - {self.nombre}"
+
+class D_DATE(models.Model):
+    date = models.DateField(primary_key=True)
+
+    def __str__(self) -> str:
+        return f"{self.date}"
+class F_PLAYER(models.Model):
+    D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
+    D_AGEGRP_FK = models.ForeignKey('D_AGEGRP', on_delete=models.CASCADE)
+    D_CLUB_FK = models.ForeignKey('D_CLUB', on_delete=models.CASCADE)
+    D_DATE_FK = models.ForeignKey('D_DATE', on_delete=models.CASCADE)
+    D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
+    Total_Club = models.IntegerField()
+    Total_Player = models.IntegerField()
+    date_table = models.DateField()
+
