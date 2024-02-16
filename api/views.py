@@ -1,116 +1,58 @@
 from django.shortcuts import render
-import json
-import sqlite3
-
-from app.models import Club, Player
-from app.models import D_CLUB, D_SEX, D_AGEGRP, D_ETABLISHEMENT, D_DATE
-from app.models import F_PLAYER
-from api.serializers import Club_Serializer, Player_Serializer
-from api.serializers import D_CLUB_Serializer, D_SEX_Serializer, D_AGEGRP_Serializer, D_ETABLISHEMENT_Serializer, D_DATE_Serializer
-from api.serializers import F_PLAYER_Serializer
-
-from Rugby.settings import DATABASES
-
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 
-class API_Operational_Data_Store(APIView):
-    """ Voici l\'API de ma base de donnée
-        Méthode GET :
-        Méthode POST :
-        Méthode PUT :
-        Méthode PATCH :
-        Méthode DELETE :
-    """
-    def get(self, request, pk=None):
+from app.models import Club, Player, D_CLUB, D_SEX, D_AGEGRP, D_ETABLISHEMENT, D_DATE, F_PLAYER
+from api.serializers import Club_Serializer, Player_Serializer, D_CLUB_Serializer, D_SEX_Serializer, D_AGEGRP_Serializer, D_ETABLISHEMENT_Serializer, D_DATE_Serializer, F_PLAYER_Serializer
 
-        if 't' in request.GET:
-            t = request.GET['t']
-            data = eval(t).objects.all()
-            count = data.count()
-        else:
-            t = 'Club'
-            data = Club.objects.all()
-            count = data.count()
-
-        serializer = Club_Serializer(data=data, many=True)
-        serializer.is_valid()
-
-        data = serializer.data
-
-        result = {
-            'count': count,
-            'data': data,
-        }
-
-        return Response(data=result, status=status.HTTP_200_OK)
-
-
-class API_Operational_Data_Store(APIView):
-    """ Voici l\'API de ma base de donnée
-        Méthode GET :
-        Méthode POST :
-        Méthode PUT :
-        Méthode PATCH :
-        Méthode DELETE :
-    """
-    def get(self, request, pk=None):
-        
-        if 't' in request.GET:
-            t = request.GET['t']
-            data = eval(t).objects.all()
-            count = data.count()
-        else:
-            t = 'Player'
-            data = Player.objects.all()
-            count = data.count()
-
-        serializer = Player_Serializer(data=data, many=True)
-        serializer.is_valid()
-
-        data = serializer.data
-
-        result = {
-            'count': count,
-            'data': data,
-        }
-
-        return Response(data=result, status=status.HTTP_200_OK)
-
-class API_Datawarehouse(APIView):
-    """ Voici l\'API de ma base de donnée
-
-        Méthode GET :
-        Méthode POST :
-        Méthode PUT :
-        Méthode PATCH :
-        Méthode DELETE :
-    """
+class BaseAPI(APIView):
+    """Base class for API views."""
+    model = None
+    serializer_class = None
+    default_t = 'D_DATE'
 
     def get(self, request, pk=None):
-
-        if 't' in request.GET:
-            t = request.GET['t']
-            data = eval(t).objects.all()
-            count = data.count()
+        t = request.GET.get('t', None)
+        if t:
+            try:
+                data = eval(t).objects.all()
+                count = data.count()
+            except AttributeError:
+                return Response(data={'error': f'Model {t} not found.'}, status=status.HTTP_400_BAD_REQUEST)
         else:
-            t = 'F_PLAYER'
+            t = 'D_DATE'
             data = F_PLAYER.objects.all()
             count = data.count()
 
         serializer = eval(f"{t}_Serializer")(data=data, many=True)
         serializer.is_valid()
 
-        data = serializer.data
-
         result = {
             't': t,
             'count': count,
-            'data': data,
+            'data': serializer.data,
         }
 
         return Response(data=result, status=status.HTTP_200_OK)
+
+class API_Operational_Data_Store_Club(BaseAPI):
+    """API for Club model."""
+    model = Club
+    serializer_class = Club_Serializer
+    default_t = 'Club'
+
+class API_Operational_Data_Store_Player(BaseAPI):
+    """API for Player model."""
+    model = Player
+    serializer_class = Player_Serializer
+    default_t = 'Player'
+
+class API_Datawarehouse_F_PLAYER(BaseAPI):
+    """API for F_PLAYER model."""
+    model = F_PLAYER
+    serializer_class = F_PLAYER_Serializer
+    default_t = 'F_PLAYER'
 
     # def post(self, request):
     #     result = {
