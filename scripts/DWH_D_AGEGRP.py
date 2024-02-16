@@ -6,15 +6,13 @@ def run():
     print("Chargement des données de la classe Player...")
     
     df_Player_apres_bulk_create = pd.DataFrame.from_records(Player.objects.values())
-    df_player = df_Player_apres_bulk_create[df_Player_apres_bulk_create['region'] == "Auvergne-Rhône-Alpes"]
-    print("Colonnes de df_player:", df_player.columns)
-
-    print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_player)}")
+    print("Colonnes de df_Player_apres_bulk_create:", df_Player_apres_bulk_create.columns)
+    print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_Player_apres_bulk_create)}")
 
     try:
         # Créer une liste unique de noms de colonnes
         unique_columns = set()
-        for column in df_player.columns:
+        for column in df_Player_apres_bulk_create.columns:
             # Extraire le label d'âge à partir des noms de colonnes
             agegrp_label = get_agegrp_label(column)
             if agegrp_label and agegrp_label != 'nr':

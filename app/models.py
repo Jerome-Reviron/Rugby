@@ -121,24 +121,30 @@ class D_AGEGRP(models.Model):
         return f"{self.agegrplabel}"
 
 class D_ETABLISHEMENT(models.Model):
-    etablishement_id = models.CharField(max_length=20, primary_key=True)
-    etablishementlabel = models.CharField(max_length=10, blank=True, null=True, default=None)
-    nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
+    etablishementlabel = models.CharField(max_length=5, primary_key=True)
 
     def __str__(self) -> str:
-        return f"{self.etablishementlabel} - {self.nombre}"
+        return f"{self.etablishementlabel}"
 
 class D_DATE(models.Model):
     date = models.DateField(primary_key=True)
 
     def __str__(self) -> str:
         return f"{self.date}"
+
 class F_PLAYER(models.Model):
+    D_5_FK = models.CharField(max_length=255, primary_key=True)
     D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
     D_AGEGRP_FK = models.ForeignKey('D_AGEGRP', on_delete=models.CASCADE)
     D_CLUB_FK = models.ForeignKey('D_CLUB', on_delete=models.CASCADE)
     D_DATE_FK = models.ForeignKey('D_DATE', on_delete=models.CASCADE)
     D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
+    nombre = models.IntegerField()
 
-    class Meta:
-        unique_together = ('D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')
+    def save(self, *args, **kwargs):
+        # Concaténer les champs pour créer la clé primaire
+        self.D_5_FK = f"{self.D_SEX_FK}-{self.D_AGEGRP_FK}-{self.D_CLUB_FK}-{self.D_DATE_FK}-{self.D_ETABLISHEMENT_FK}"
+        super().save(*args, **kwargs)
+
+    def __str__(self) -> str:
+        return f"{self.D_5_FK} - {self.nombre}"
