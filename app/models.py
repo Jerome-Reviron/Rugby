@@ -90,13 +90,13 @@ class Player(models.Model):
 class D_CLUB(models.Model):
     code_code_qpv_code_commune = models.CharField(max_length=100, primary_key=True)
     code = models.IntegerField()
-    code_qpv = models.CharField(max_length=20, blank=True, null=True, default=None)
+    code_qpv = models.CharField(max_length=20)
     nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
     federation = models.CharField(max_length=255, blank=True, null=True, default=None)
     region = models.CharField(max_length=255, blank=True, null=True, default=None)
     departement = models.CharField(max_length=255, blank=True, null=True, default=None)
     nom_departement = models.CharField(max_length=255, blank=True, null=True, default=None)
-    code_commune = models.CharField(max_length=20, blank=True, null=True, default=None)
+    code_commune = models.CharField(max_length=20)
     commune = models.CharField(max_length=150, blank=True, null=True, default=None)
     statut_geo = models.CharField(max_length=20, blank=True, null=True, default=None)
 

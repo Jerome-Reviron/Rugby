@@ -42,6 +42,9 @@ def run():
     Club.objects.bulk_create(Clubs)
     print("Insertion des objets Club terminée.")
 
+    # Récupérer les données après bulk_create dans un DataFrame
+    df_Club_apres_bulk_create = pd.DataFrame.from_records(Club.objects.values())
+
 def get_year_from_csv(csv_file):
     # Extraire l'année du nom du fichier CSV
     year = None

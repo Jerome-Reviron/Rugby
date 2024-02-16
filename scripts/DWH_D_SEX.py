@@ -5,8 +5,8 @@ from app.models import Player, D_SEX
 def run():
     print("Chargement des données de la classe Player...")
     # Charger les données de la classe Player dans un DataFrame Pandas
-    player_data = Player.objects.filter(region="Auvergne-Rhône-Alpes").values()
-    df_player = pd.DataFrame.from_records(player_data)
+    df_Player_apres_bulk_create = pd.DataFrame.from_records(Player.objects.values())
+    df_player = pd.DataFrame.from_records(df_Player_apres_bulk_create)
     print(f"Nombre de lignes à insérer dans la table D_SEX : {len(df_player)}")
 
     try:

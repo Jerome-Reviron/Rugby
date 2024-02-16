@@ -4,8 +4,11 @@ from app.models import Player, D_AGEGRP
 
 def run():
     print("Chargement des données de la classe Player...")
-    player_data = Player.objects.filter(region="Auvergne-Rhône-Alpes").values()
-    df_player = pd.DataFrame.from_records(player_data)
+    
+    df_Player_apres_bulk_create = pd.DataFrame.from_records(Player.objects.values())
+    df_player = df_Player_apres_bulk_create[df_Player_apres_bulk_create['region'] == "Auvergne-Rhône-Alpes"]
+    print("Colonnes de df_player:", df_player.columns)
+
     print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_player)}")
 
     try:
@@ -31,6 +34,7 @@ def run():
 
         # Stocker le DataFrame dans une variable
         df_agegrp_apres_bulk_create = pd.DataFrame.from_records(D_AGEGRP.objects.values())
+        print("Colonnes de df_agegrp_apres_bulk_create:", df_agegrp_apres_bulk_create.columns)
 
         print("Script terminé avec succès!")
     except IntegrityError as e:
@@ -40,7 +44,7 @@ def get_agegrp_label(column):
     # Logique pour extraire la partie après le premier '_' et avant 'ans' dans le nom de la colonne
     parts = column.split('_')
     if len(parts) > 1 and parts[-1] == 'ans':
-        return f"_{parts[1]}_{parts[2]}_{parts[3]}_ans"
+        return f"{parts[1]}_{parts[2]}_{parts[3]}"
     else:
         return None
 

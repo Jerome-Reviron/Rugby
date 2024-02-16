@@ -4,10 +4,9 @@ from app.models import D_CLUB, Club
 
 def run():
     print("Chargement des données de la classe Club...")
-    
-    # Charger les données de la classe Club dans un DataFrame Pandas
-    club_data = Club.objects.filter(region="Auvergne-Rhône-Alpes").values()
-    df_club = pd.DataFrame.from_records(club_data)
+
+    df_Club_apres_bulk_create = pd.DataFrame.from_records(Club.objects.values())
+    df_club = df_Club_apres_bulk_create[df_Club_apres_bulk_create['region'] == "Auvergne-Rhône-Alpes"]
     print("Colonnes de df_club:", df_club.columns)
 
     print(f"Nombre de lignes à insérer dans la table D_CLUB : {len(df_club)}")

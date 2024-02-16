@@ -9,6 +9,17 @@ def run():
     df_club_apres_bulk_create = pd.DataFrame.from_records(D_CLUB.objects.values())
     # print("Colonnes de df_club_apres_bulk_create:", df_club_apres_bulk_create.columns)
 
+    df_agegrp_apres_bulk_create = pd.DataFrame.from_records(D_AGEGRP.objects.values())
+    # print("Colonnes de df_agegrp_apres_bulk_create:", df_agegrp_apres_bulk_create.columns)
+
+    df_date_apres_bulk_create = pd.DataFrame.from_records(D_DATE.objects.values())
+    # print("Colonnes de df_date_apres_bulk_create:", df_date_apres_bulk_create.columns)
+    
+    df_etablishement_apres_bulk_create = pd.DataFrame.from_records(D_ETABLISHEMENT.objects.values())
+    # print("Colonnes de df_etablishement_apres_bulk_create:", df_etablishement_apres_bulk_create.columns)
+
+    df_sex_apres_bulk_create = pd.DataFrame.from_records(D_SEX.objects.values())
+    # print("Colonnes de df_sex_apres_bulk_create:", df_sex_apres_bulk_create.columns)
 
     # Liste pour stocker les objets F_PLAYER
     f_player_objects = []
