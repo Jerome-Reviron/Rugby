@@ -30,6 +30,7 @@ class Club(models.Model):
     clubs = models.CharField(max_length=255, blank=True, null=True, default=None)
     epa = models.CharField(max_length=255, blank=True, null=True, default=None)
     total = models.CharField(max_length=255, blank=True, null=True, default=None)
+    date = models.DateField(null=True, blank=True, default=None)
 
     def __str__(self) -> str:
         return  f"{self.code_qpv} - {self.code} - {self.federation}"
@@ -87,7 +88,7 @@ class Player(models.Model):
         return f"{self.code_qpv} - {self.code} - {self.federation}"
 
 class D_CLUB(models.Model):
-    code_code_qpv_code_commune = models.CharField(max_length=100, unique=True, blank=True, null=True)
+    code_code_qpv_code_commune = models.CharField(max_length=100, primary_key=True)
     code = models.IntegerField()
     code_qpv = models.CharField(max_length=20, blank=True, null=True, default=None)
     nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
@@ -138,7 +139,6 @@ class F_PLAYER(models.Model):
     D_CLUB_FK = models.ForeignKey('D_CLUB', on_delete=models.CASCADE)
     D_DATE_FK = models.ForeignKey('D_DATE', on_delete=models.CASCADE)
     D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
-    Total_Club = models.IntegerField()
-    Total_Player = models.IntegerField()
-    date_table = models.DateField()
 
+    class Meta:
+        unique_together = ('D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')
