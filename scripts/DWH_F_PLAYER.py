@@ -1,99 +1,139 @@
 import pandas as pd
-from django.db import IntegrityError
-from app.models import F_PLAYER, D_SEX, D_AGEGRP, D_CLUB, D_DATE, D_ETABLISHEMENT, Player, Club
+from app.models import D_CLUB, D_AGEGRP, D_DATE, D_ETABLISHEMENT, D_SEX, F_PLAYER
 
 def run():
-    print("Chargement des données...")
-    # Charger les données des classes dimensionnelles dans des DataFrames Pandas
-    player_data = Player.objects.values()
-    df_player = pd.DataFrame.from_records(player_data)
-    print("Colonnes dans le DataFrame 'Player' : ", df_player.columns)
+    df_club_apres_bulk_create = pd.DataFrame.from_records(D_CLUB.objects.values())
+    print(f"Nombre de lignes à insérer dans la table D_CLUB : {len(df_club_apres_bulk_create)}")
 
-    club_data = Club.objects.values()
-    df_club = pd.DataFrame.from_records(club_data)
-    print("Colonnes dans le DataFrame 'Club' : ", df_club.columns)
+    # Créer des instances de D_CLUB à partir du DataFrame
+    temp_table_club = []
 
-    d_sex_data = D_SEX.objects.values()
-    df_d_sex = pd.DataFrame.from_records(d_sex_data)
-    print("Colonnes dans le DataFrame 'D_SEX' : ", df_d_sex.columns)
+    for _, row in df_club_apres_bulk_create.iterrows():
+        key = f"{row['code']}-{row['code_qpv']}-{row['code_commune']}"
+        d_club_instance = D_CLUB(
+            code=row['code'],
+            code_qpv=row['code_qpv'],
+            nom_qpv=row['nom_qpv'],
+            federation=row['federation'],
+            region=row['region'],
+            departement=row['departement'],
+            nom_departement=row['nom_departement'],
+            code_commune=row['code_commune'],
+            commune=row['commune'],
+            statut_geo=row['statut_geo'],
+            code_code_qpv_code_commune=key,
+        )
 
-    d_agegrp_data = D_AGEGRP.objects.values()
-    df_d_agegrp = pd.DataFrame.from_records(d_agegrp_data)
-    print("Colonnes dans le DataFrame 'D_AGEGRP' : ", df_d_agegrp.columns)
+        # Ajouter la clé primaire dans la table temporaire
+        temp_table_club.append({
+            'd_club_instance': d_club_instance,
+            'd_club_fk': d_club_instance.code_code_qpv_code_commune,
+        })
 
-    d_club_data = D_CLUB.objects.values()
-    df_d_club = pd.DataFrame.from_records(d_club_data)
-    print("Colonnes dans le DataFrame 'D_CLUB' : ", df_d_club.columns)
+    df_agegrp_apres_bulk_create = pd.DataFrame.from_records(D_AGEGRP.objects.values())
+    print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_agegrp_apres_bulk_create)}")
 
-    d_date_data = D_DATE.objects.values()
-    df_d_date = pd.DataFrame.from_records(d_date_data)
-    print("Colonnes dans le DataFrame 'D_DATE' : ", df_d_date.columns)
+    # Créer des instances de D_AGEGRP à partir du DataFrame
+    temp_table_agegrp = []
 
-    d_etablissement_data = D_ETABLISHEMENT.objects.values()
-    df_d_etablissement = pd.DataFrame.from_records(d_etablissement_data)
-    print("Colonnes dans le DataFrame 'D_ETABLISHEMENT' : ", df_d_etablissement.columns)
+    for _, row in df_agegrp_apres_bulk_create.iterrows():
+        d_agegrp_instance = D_AGEGRP(
+            agegrplabel=row['agegrplabel']
+        )
 
-    df_f_player = pd.DataFrame()
+        # Ajouter la clé primaire dans la table temporaire
+        temp_table_agegrp.append({
+            'd_agegrp_instance': d_agegrp_instance,
+            'd_agegrp_fk': d_agegrp_instance.agegrplabel,
+        })
 
-    # Remplir df_f_player en joignant les DataFrames dimensionnels
-    # (remplacer 'key' par la clé appropriée pour chaque fusion)
-    df_f_player = pd.merge(df_player, df_d_sex, on='sexcode', how='inner')
-    df_f_player = pd.merge(df_f_player, df_d_agegrp, on='agegrplabel', how='inner')
-    df_f_player = pd.merge(df_f_player, df_d_club, on='code_code_qpv_code_commune', how='inner')
-    df_f_player = pd.merge(df_f_player, df_d_date, on='date', how='inner')
-    df_f_player = pd.merge(df_f_player, df_d_etablissement, on='etablishement_id', how='inner')
+    df_date_apres_bulk_create = pd.DataFrame.from_records(D_DATE.objects.values())
+    print(f"Nombre de lignes à insérer dans la table D_DATE : {len(df_date_apres_bulk_create)}")
 
-    print(f"Nombre de lignes à insérer dans la table F_PLAYER : {len(df_f_player)}")
+    # Créer des instances de D_DATE à partir du DataFrame
+    temp_table_date = []
 
-    try:
-        # Supprimer toutes les données de la table F_PLAYER avant l'insertion
-        F_PLAYER.objects.all().delete()
-        print("Anciennes données effacées avant insertion!")
+    for _, row in df_date_apres_bulk_create.iterrows():
+        d_date_instance = D_DATE(
+            date=row['date']
+        )
 
-        # Charger les données des autres classes
-        d_sex_data = D_SEX.objects.values()
-        df_d_sex = pd.DataFrame.from_records(d_sex_data)
+        # Ajouter la clé primaire dans la table temporaire
+        temp_table_date.append({
+            'd_date_instance': d_date_instance,
+            'd_date_fk': d_date_instance.date,
+        })
 
-        # Fusionner les DataFrames
-        df_f_player = pd.merge(df_f_player, df_d_sex, left_on='SexCode', right_on='SexCode', how='left')
+    df_etablishement_apres_bulk_create = pd.DataFrame.from_records(D_ETABLISHEMENT.objects.values())
+    print(f"Nombre de lignes à insérer dans la table D_ETABLISHEMENT : {len(df_etablishement_apres_bulk_create)}")
 
-        d_agegrp_data = D_AGEGRP.objects.values()
-        df_d_agegrp = pd.DataFrame.from_records(d_agegrp_data)
-        df_f_player = pd.merge(df_f_player, df_d_agegrp, left_on='AgeGrpLabel', right_on='AgeGrpLabel', how='left')
+    # Créer des instances de D_ETABLISHEMENT à partir du DataFrame
+    temp_table_etablishement = []
 
-        d_club_data = D_CLUB.objects.values()
-        df_d_club = pd.DataFrame.from_records(d_club_data)
-        df_f_player = pd.merge(df_f_player, df_d_club, left_on='ClubCode', right_on='code_code_qpv_code_commune', how='left')
+    for _, row in df_etablishement_apres_bulk_create.iterrows():
+        d_etablishement_instance = D_ETABLISHEMENT(
+            etablishement_id=row['etablishement_id'],
+            etablishementlabel=row['etablishementlabel'],
+            nombre=row['nombre'],
+        )
 
-        d_date_data = D_DATE.objects.values()
-        df_d_date = pd.DataFrame.from_records(d_date_data)
-        df_f_player = pd.merge(df_f_player, df_d_date, left_on='Date', right_on='Date', how='left')
+        # Ajouter la clé primaire dans la table temporaire
+        temp_table_etablishement.append({
+            'd_etablishement_instance': d_etablishement_instance,
+            'd_etablishement_fk': d_etablishement_instance.etablishement_id,
+        })
 
-        d_etablissement_data = D_ETABLISHEMENT.objects.values()
-        df_d_etablissement = pd.DataFrame.from_records(d_etablissement_data)
-        df_f_player = pd.merge(df_f_player, df_d_etablissement, left_on='EtablishementLabel', right_on='EtablishementLabel', how='left')
+    df_sex_apres_bulk_create = pd.DataFrame.from_records(D_SEX.objects.values())
+    print(f"Nombre de lignes à insérer dans la table D_SEX : {len(df_sex_apres_bulk_create)}")
 
-        # Supprimer les colonnes inutiles
-        df_f_player = df_f_player.drop(['SexCode', 'AgeGrpLabel', 'ClubCode', 'Date', 'EtablishementLabel'], axis=1)
 
-        # Utiliser bulk_create pour insérer les objets F_PLAYER en une seule requête
-        F_PLAYER.objects.bulk_create([
-            F_PLAYER(
-                D_SEX_FK_id=row['sexcode'],
-                D_AGEGRP_FK_id=row['agegrplabel'],
-                D_CLUB_FK_id=row['code_code_qpv_code_commune'],
-                D_DATE_FK_id=row['date'],
-                D_ETABLISHEMENT_FK_id=row['etablishement_id'],
-                Total_Club=row['Total_Club'],
-                Total_Player=row['Total_Player'],
-                date_table=row['date_table']
-            )
-            for _, row in df_f_player.iterrows()
-        ])
+    # Créer des instances de D_SEX à partir du DataFrame
+    temp_table_sex = []
 
-        print("Script terminé avec succès!")
-    except IntegrityError as e:
-        print(f"Erreur lors de l'insertion des données : {e}")
+    for _, row in df_sex_apres_bulk_create.iterrows():
+        d_sex_instance = D_SEX(
+            sexcode=row['sexcode']
+        )
+
+        # Ajouter la clé primaire dans la table temporaire
+        temp_table_sex.append({
+            'd_sex_instance': d_sex_instance,
+            'd_sex_fk': d_sex_instance.sexcode,
+        })        
+
+    # Utiliser bulk_create pour créer les instances de F_PLAYER avec les clés étrangères de D_CLUB, D_AGEGRP, D_DATE et D_ETABLISHEMENT
+    f_player_objects = []
+
+    for item_club, item_agegrp, item_date, item_etablishement, item_sex in zip(
+        temp_table_club, temp_table_agegrp, temp_table_date, temp_table_etablishement, temp_table_sex
+    ):
+        # Assurez-vous que chaque relation est sauvegardée individuellement
+        d_club_instance = item_club['d_club_instance']
+        d_agegrp_instance = item_agegrp['d_agegrp_instance']
+        d_date_instance = item_date['d_date_instance']
+        d_etablishement_instance = item_etablishement['d_etablishement_instance']
+        d_sex_instance = item_sex['d_sex_instance']
+
+        d_club_instance.save()
+        d_agegrp_instance.save()
+        d_date_instance.save()
+        d_etablishement_instance.save()
+        d_sex_instance.save()
+
+        # Créez l'objet F_PLAYER avec les relations correctement sauvegardées
+        f_player_instance = F_PLAYER(
+            D_CLUB_FK=d_club_instance,
+            D_AGEGRP_FK=d_agegrp_instance,
+            D_DATE_FK=d_date_instance,
+            D_ETABLISHEMENT_FK=d_etablishement_instance,
+            D_SEX_FK=d_sex_instance,
+        )
+
+        f_player_objects.append(f_player_instance)
+
+    F_PLAYER.objects.bulk_create(f_player_objects)
+
+    print("Script terminé avec succès!")
 
 if __name__ == "__main__":
     run()

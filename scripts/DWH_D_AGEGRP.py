@@ -4,7 +4,7 @@ from app.models import Player, D_AGEGRP
 
 def run():
     print("Chargement des données de la classe Player...")
-    player_data = Player.objects.values()
+    player_data = Player.objects.filter(region="Auvergne-Rhône-Alpes").values()
     df_player = pd.DataFrame.from_records(player_data)
     print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_player)}")
 
@@ -14,7 +14,7 @@ def run():
         for column in df_player.columns:
             # Extraire le label d'âge à partir des noms de colonnes
             agegrp_label = get_agegrp_label(column)
-            if agegrp_label:
+            if agegrp_label and agegrp_label != 'nr':
                 unique_columns.add(agegrp_label)
 
         # Supprimer toutes les données de la table D_AGEGRP avant l'insertion
@@ -28,6 +28,9 @@ def run():
             )
             for agegrp_label in unique_columns
         ])
+
+        # Stocker le DataFrame dans une variable
+        df_agegrp_apres_bulk_create = pd.DataFrame.from_records(D_AGEGRP.objects.values())
 
         print("Script terminé avec succès!")
     except IntegrityError as e:

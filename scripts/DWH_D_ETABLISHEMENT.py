@@ -9,7 +9,7 @@ def run():
 
     print("Chargement des données de la classe Club...")
     # Charger les données de la classe Club dans un DataFrame Pandas
-    club_data = Club.objects.values()
+    club_data = Club.objects.filter(region="Auvergne-Rhône-Alpes").values()
     df_club = pd.DataFrame.from_records(club_data)
     print(f"nombre de lignes à insérer dans la table D_ETABLISHEMENT : {len(df_club)}")
 
@@ -31,6 +31,9 @@ def run():
             )
             for _, row in df_club.iterrows()
         ])
+
+        # Stocker le DataFrame dans une variable
+        df_etablishement_apres_bulk_create = pd.DataFrame.from_records(D_ETABLISHEMENT.objects.values())
 
         print("Script terminé avec succès!")
     except IntegrityError as e:

@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+from datetime import date
 from app.models import Club
 
 def run():
@@ -11,6 +12,9 @@ def run():
     # Tronquer la table Club
     Club.objects.all().delete()
     print("Table Club tronquée.")
+
+    # Extraire l'année à partir du nom du fichier CSV
+    year = get_year_from_csv("data/clubs-data-2021.csv")
 
     # Utiliser une compréhension de liste avec to_dict
     Clubs = [
@@ -27,6 +31,7 @@ def run():
             clubs=row['Clubs'],
             epa=row['EPA'],
             total=row['Total'],
+            date=date(year, 1, 1)
         )
         for index, row in df.iterrows()
     ]
@@ -36,6 +41,23 @@ def run():
     # Utiliser bulk_create pour insérer les objets Club en une seule requête
     Club.objects.bulk_create(Clubs)
     print("Insertion des objets Club terminée.")
+
+def get_year_from_csv(csv_file):
+    # Extraire l'année du nom du fichier CSV
+    year = None
+    file_name, file_ext = os.path.splitext(os.path.basename(csv_file))
+    parts = file_name.split("-")
+    for part in parts:
+        if part.isdigit() and len(part) == 4:
+            year = int(part)
+            break
+
+    if year:
+        print(f"Année extraite pour {csv_file}: {year}")
+        return year
+    else:
+        print(f"Impossible d'extraire l'année pour {csv_file}")
+        return None
 
 if __name__ == "__main__":
     run()

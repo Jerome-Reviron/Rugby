@@ -22,6 +22,10 @@ def run():
                 for year in years
             ])
 
+            # Stocker le DataFrame dans une variable
+            df_date_apres_bulk_create = pd.DataFrame.from_records(D_DATE.objects.values())
+
+
             print("Script terminé avec succès!")
     except IntegrityError as e:
         print(f"Erreur lors de l'insertion des données : {e}")
