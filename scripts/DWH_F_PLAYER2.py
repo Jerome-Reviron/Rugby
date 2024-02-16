@@ -60,6 +60,7 @@ def run():
 
     # Utiliser une transaction atomique pour garantir l'intégrité de la base de données
     with transaction.atomic():
+        total_rows_inserted = 0
         try:
             # Itérer sur les lignes de melted_dataframe
             for _, row in melted_dataframe.iterrows():
@@ -81,8 +82,10 @@ def run():
                 )
                 d_club_instance = D_CLUB(
                     code=row['code'],
+                    code_qpv=row['code_qpv'],
+                    code_commune=row['code_commune'],
                 )
-
+                
                 # Enregistrez les instances de D_CLUB, D_AGEGRP, D_DATE, D_ETABLISHEMENT, D_SEX
                 d_club_instance.save()
                 d_etablishement_instance.save()
@@ -112,7 +115,7 @@ def run():
             # Afficher le nombre total de lignes qui seront insérées
             print(f"Nombre total de lignes à insérer : {total_rows_inserted}")
 
-            chunk_size = 1000 
+            chunk_size = 10000
 
             # # Utilisation de bulk_create avec ignore_conflicts=True
             # F_PLAYER.objects.bulk_create(f_player_objects, ignore_conflicts=True)
