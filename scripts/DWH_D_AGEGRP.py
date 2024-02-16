@@ -20,6 +20,9 @@ def run():
             if agegrp_label and agegrp_label != 'nr':
                 unique_columns.add(agegrp_label)
 
+        # Trier les labels d'âge uniquement sur la partie '20', '25', '30', ...
+        sorted_age_labels = sorted(unique_columns, key=lambda x: int(x.split('_')[1]))
+
         # Supprimer toutes les données de la table D_AGEGRP avant l'insertion
         D_AGEGRP.objects.all().delete()
         print("Anciennes données effacées avant insertion!")
@@ -29,7 +32,7 @@ def run():
             D_AGEGRP(
                 agegrplabel=agegrp_label
             )
-            for agegrp_label in unique_columns
+            for agegrp_label in sorted_age_labels
         ])
 
         # Stocker le DataFrame dans une variable
