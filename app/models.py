@@ -90,13 +90,13 @@ class Player(models.Model):
 class D_CLUB(models.Model):
     code_code_qpv_code_commune = models.CharField(max_length=100, primary_key=True)
     code = models.IntegerField()
-    code_qpv = models.CharField(max_length=20, blank=True, null=True, default=None)
+    code_qpv = models.CharField(max_length=20)
     nom_qpv = models.CharField(max_length=255, blank=True, null=True, default=None)
     federation = models.CharField(max_length=255, blank=True, null=True, default=None)
     region = models.CharField(max_length=255, blank=True, null=True, default=None)
     departement = models.CharField(max_length=255, blank=True, null=True, default=None)
     nom_departement = models.CharField(max_length=255, blank=True, null=True, default=None)
-    code_commune = models.CharField(max_length=20, blank=True, null=True, default=None)
+    code_commune = models.CharField(max_length=20)
     commune = models.CharField(max_length=150, blank=True, null=True, default=None)
     statut_geo = models.CharField(max_length=20, blank=True, null=True, default=None)
 
@@ -121,24 +121,24 @@ class D_AGEGRP(models.Model):
         return f"{self.agegrplabel}"
 
 class D_ETABLISHEMENT(models.Model):
-    etablishement_id = models.CharField(max_length=20, primary_key=True)
-    etablishementlabel = models.CharField(max_length=10, blank=True, null=True, default=None)
-    nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
+    etablishementlabel = models.CharField(max_length=5, primary_key=True)
 
     def __str__(self) -> str:
-        return f"{self.etablishementlabel} - {self.nombre}"
+        return f"{self.etablishementlabel}"
 
 class D_DATE(models.Model):
     date = models.DateField(primary_key=True)
 
     def __str__(self) -> str:
         return f"{self.date}"
+
 class F_PLAYER(models.Model):
+    D_5_PK = models.CharField(max_length=100, primary_key=True)
+    D_CLUB_FK = models.ForeignKey('D_CLUB', on_delete=models.CASCADE)
     D_SEX_FK = models.ForeignKey('D_SEX', on_delete=models.CASCADE)
     D_AGEGRP_FK = models.ForeignKey('D_AGEGRP', on_delete=models.CASCADE)
-    D_CLUB_FK = models.ForeignKey('D_CLUB', on_delete=models.CASCADE)
     D_DATE_FK = models.ForeignKey('D_DATE', on_delete=models.CASCADE)
     D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
-
+    nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
     class Meta:
-        unique_together = ('D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')
+        unique_together = ('D_5_PK', 'D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')

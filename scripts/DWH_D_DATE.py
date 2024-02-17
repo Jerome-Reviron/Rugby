@@ -2,7 +2,7 @@ import os
 import pandas as pd
 from datetime import date
 from django.db import IntegrityError
-from app.models import Player, D_DATE
+from app.models import D_DATE
 
 def run():
     try:
@@ -59,6 +59,6 @@ def get_year_from_csv(csv_file):
     else:
         print(f"Impossible d'extraire l'année pour {csv_file}")
         return None
-    
+
 if __name__ == "__main__":
     run()

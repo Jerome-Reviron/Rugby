@@ -24,5 +24,5 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(api_urls)),
     path('', index),
-    path('licences', licences),
+    path('licences/', licences),
 ]
