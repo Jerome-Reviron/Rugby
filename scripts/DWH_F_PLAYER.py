@@ -6,14 +6,24 @@ global_counter = 0
 
 def run():
 
+    # Liste pour stocker les objets F_PLAYER
+    f_player_objects = []
+    total_rows = len(f_player_objects)
+
     # Charger les DataFrames pour Player et Club
-    player_data = Player.objects.filter(region="Auvergne-Rhône-Alpes", code_commune="NR - Non réparti").values()
+    player_data = Player.objects.filter(region="Auvergne-Rhône-Alpes").values()
     df_player = pd.DataFrame.from_records(player_data)
     # print("Colonnes de df_player:", df_player.columns)
+    # print("DataFrame df_player:")
+    # print(df_player.head())
 
-    club_data = Club.objects.filter(region="Auvergne-Rhône-Alpes", code_commune="NR - Non réparti").values()
+
+
+    club_data = Club.objects.filter(region="Auvergne-Rhône-Alpes").values()
     df_club = pd.DataFrame.from_records(club_data)
     # print("Colonnes de df_club:", df_club.columns)
+    # print("DataFrame df_club:")
+    # print(df_club.head())
 
     # # Charger les DataFrames à partir de la base de données
     df_club_apres_bulk_create = pd.DataFrame.from_records(D_CLUB.objects.values())
@@ -21,14 +31,13 @@ def run():
 
     # Fusionner les DataFrames pour créer le big_dataframe
     big_dataframe = pd.merge(df_player, df_club, on=["code", "code_qpv", "code_commune"])
+    # print("DataFrame big_dataframe:")
+    # print(big_dataframe.head())
+
     # Convertir la colonne 'code' de df_club_apres_bulk_create en type objet
     df_club_apres_bulk_create['code'] = df_club_apres_bulk_create['code'].astype(str)
     big_dataframe = pd.merge(big_dataframe, df_club_apres_bulk_create, how='left', on=["code", "code_qpv", "code_commune"])
     # print("Colonnes de big_dataframe:", big_dataframe.columns)
-
-    # Liste pour stocker les objets F_PLAYER
-    f_player_objects = []
-    total_rows = len(f_player_objects)
 
     # Appliquer le filtre sur la colonne 'code_commune'
     big_dataframe = big_dataframe.loc[big_dataframe['code_commune'] != "NR - Non réparti"]
@@ -53,7 +62,7 @@ def run():
 
     # Créer une colonne 'agegrplabel' à partir du nom de la colonne 'category'
     melted_dataframe_1['agegrplabel'] = melted_dataframe_1['category_MC_1'].apply(get_agegrp_label)
-    print("Colonnes de melted_dataframe_1:", melted_dataframe_1.columns)
+    # print("Colonnes de melted_dataframe_1:", melted_dataframe_1.columns)
 
     # Colonnes à fondre (etablishementlabel)
     melt_columns_2 = ["clubs", "epa"]
@@ -69,12 +78,18 @@ def run():
     # Fusionner melted_dataframe_1 et melted_dataframe_2
     final_dataframe = pd.merge(melted_dataframe_1, melted_dataframe_2, on=["code_code_qpv_code_commune", "code", "code_qpv", "code_commune", "date"])
 
+    # Filtrer les lignes où la colonne 'nombre' est différente de 0
+    final_dataframe = final_dataframe[final_dataframe['value_MC_2'] != 0]   
+
     # Afficher les colonnes du DataFrame résultant
     # print("Colonnes du DataFrame final :", final_dataframe.columns)
 
     # Liste pour stocker les objets F_PLAYER
     f_player_objects = []
     total_rows = len(f_player_objects)
+
+    # Supprimer toutes les entrées existantes dans la table F_PLAYER
+    F_PLAYER.objects.all().delete()
 
     # Utiliser une transaction atomique pour garantir l'intégrité de la base de données
     with transaction.atomic():
@@ -85,9 +100,9 @@ def run():
                 # Créer des instances de D_CLUB, D_AGEGRP, D_DATE, D_ETABLISHEMENT, D_SEX
                 d_club_instance = D_CLUB(
                     code_code_qpv_code_commune=row['code_code_qpv_code_commune'],
-                )
-                d_etablishement_instance = D_ETABLISHEMENT(
-                    etablishementlabel=row['etablishementlabel']
+                    code=row['code'],
+                    code_qpv=row['code_qpv'],
+                    code_commune=row['code_commune']
                 )
                 d_sex_instance = D_SEX(
                     sexcode=row['sexcode']
@@ -98,21 +113,28 @@ def run():
                 d_date_instance = D_DATE(
                     date=row['date']
                 )
+                d_etablishement_instance = D_ETABLISHEMENT(
+                    etablishementlabel=row['etablishementlabel']
+                )
 
                 # Enregistrez les instances de D_CLUB, D_AGEGRP, D_DATE, D_ETABLISHEMENT, D_SEX
                 d_club_instance.save()
-                d_etablishement_instance.save()
                 d_sex_instance.save()
                 d_agegrp_instance.save()
                 d_date_instance.save()
+                d_etablishement_instance.save()
+
+                # Créer la clé primaire concaténée
+                D_5_PK = f"{row['code_code_qpv_code_commune']}_{row['date']}_{row['etablishementlabel']}_{row['sexcode']}_{row['agegrplabel']}"
 
                 # Créer l'objet F_PLAYER avec les relations correctement sauvegardées
                 f_player_instance = F_PLAYER(
+                    D_5_PK,
                     D_CLUB_FK=d_club_instance,
-                    D_ETABLISHEMENT_FK=d_etablishement_instance,
                     D_SEX_FK=d_sex_instance,
                     D_AGEGRP_FK=d_agegrp_instance,
                     D_DATE_FK=d_date_instance,
+                    D_ETABLISHEMENT_FK=d_etablishement_instance,
                     nombre=row['value_MC_2']  # Assurez-vous d'ajuster cela en fonction de votre modèle F_PLAYER
                 )
 
@@ -130,6 +152,10 @@ def run():
 
             # Utilisation de bulk_create avec ignore_conflicts=True
             F_PLAYER.objects.bulk_create(f_player_objects, ignore_conflicts=True)
+
+            # Stocker le DataFrame dans une variable
+            df_f_player_apres_bulk_create = pd.DataFrame.from_records(F_PLAYER.objects.values())
+            # print("Colonnes de df_sex_apres_bulk_create:", df_sex_apres_bulk_create.columns)
 
             print(f"Script terminé avec succès! {total_rows_inserted} lignes insérées.")
         except Exception as e:

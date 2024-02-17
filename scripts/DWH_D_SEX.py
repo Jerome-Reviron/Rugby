@@ -6,7 +6,7 @@ def run():
     print("Chargement des données de la classe Player...")
 
     df_Player_apres_bulk_create = pd.DataFrame.from_records(Player.objects.values())
-    print("Colonnes de df_Player_apres_bulk_create:", df_Player_apres_bulk_create.columns)
+    # print("Colonnes de df_Player_apres_bulk_create:", df_Player_apres_bulk_create.columns)
     print(f"Nombre de lignes à insérer dans la table D_SEX : {len(df_Player_apres_bulk_create)}")
 
     try:
@@ -31,7 +31,7 @@ def run():
 
         # Stocker le DataFrame dans une variable
         df_sex_apres_bulk_create = pd.DataFrame.from_records(D_SEX.objects.values())
-        print("Colonnes de df_sex_apres_bulk_create:", df_sex_apres_bulk_create.columns)
+        # print("Colonnes de df_sex_apres_bulk_create:", df_sex_apres_bulk_create.columns)
 
         print("Script terminé avec succès!")
     except IntegrityError as e:

@@ -11,7 +11,7 @@ def run():
 
     # Tri du DataFrame selon les colonnes spécifiées
     df_club_sorted = df_club.sort_values(by=['code', 'code_qpv', 'code_commune'])
-    print("Colonnes de df_club:", df_club.columns)
+    # print("Colonnes de df_club:", df_club.columns)
 
     print(f"Nombre de lignes à insérer dans la table D_CLUB : {len(df_club)}")
 

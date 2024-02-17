@@ -6,7 +6,7 @@ def run():
     print("Chargement des données de la classe Player...")
     
     df_Player_apres_bulk_create = pd.DataFrame.from_records(Player.objects.values())
-    print("Colonnes de df_Player_apres_bulk_create:", df_Player_apres_bulk_create.columns)
+    # print("Colonnes de df_Player_apres_bulk_create:", df_Player_apres_bulk_create.columns)
     print(f"Nombre de lignes à insérer dans la table D_AGEGRP : {len(df_Player_apres_bulk_create)}")
 
     try:
@@ -23,7 +23,7 @@ def run():
 
         # Supprimer toutes les données de la table D_AGEGRP avant l'insertion
         D_AGEGRP.objects.all().delete()
-        print("Anciennes données effacées avant insertion!")
+        # print("Anciennes données effacées avant insertion!")
 
         # Utiliser bulk_create pour insérer les objets D_AGEGRP en une seule requête
         D_AGEGRP.objects.bulk_create([
@@ -35,7 +35,7 @@ def run():
 
         # Stocker le DataFrame dans une variable
         df_agegrp_apres_bulk_create = pd.DataFrame.from_records(D_AGEGRP.objects.values())
-        print("Colonnes de df_agegrp_apres_bulk_create:", df_agegrp_apres_bulk_create.columns)
+        # print("Colonnes de df_agegrp_apres_bulk_create:", df_agegrp_apres_bulk_create.columns)
 
         print("Script terminé avec succès!")
     except IntegrityError as e:
