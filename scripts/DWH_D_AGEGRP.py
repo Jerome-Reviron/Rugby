@@ -45,7 +45,7 @@ def get_agegrp_label(column):
     # Logique pour extraire la partie après le premier '_' et avant 'ans' dans le nom de la colonne
     parts = column.split('_')
     if len(parts) > 1 and parts[-1] == 'ans':
-        return f"{parts[1]}_{parts[2]}_{parts[3]}"
+        return f"_{parts[1]}_{parts[2]}_{parts[3]}"
     else:
         return None
 

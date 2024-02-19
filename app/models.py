@@ -142,3 +142,10 @@ class F_PLAYER(models.Model):
     nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
     class Meta:
         unique_together = ('D_5_PK', 'D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')
+
+class City(models.Model):
+    postal_code = models.CharField(max_length=5, primary_key=True)
+    name = models.CharField(max_length=300)
+    departement = models.CharField(max_length=150)
+    region = models.CharField(max_length=150)
+    country = models.CharField(max_length=100)

@@ -128,12 +128,12 @@ class Migration(migrations.Migration):
             name='F_PLAYER',
             fields=[
                 ('D_5_PK', models.CharField(max_length=100, primary_key=True, serialize=False)),
-                ('nombre', models.CharField(blank=True, default=None, max_length=10, null=True)),
-                ('D_AGEGRP_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_agegrp')),
                 ('D_CLUB_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_club')),
+                ('D_SEX_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_sex')),
+                ('D_AGEGRP_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_agegrp')),
                 ('D_DATE_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_date')),
                 ('D_ETABLISHEMENT_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_etablishement')),
-                ('D_SEX_FK', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='app.d_sex')),
+                ('nombre', models.CharField(blank=True, default=None, max_length=10, null=True)),
             ],
             options={
                 'unique_together': {('D_5_PK', 'D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')},

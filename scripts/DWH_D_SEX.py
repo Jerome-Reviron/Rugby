@@ -15,7 +15,7 @@ def run():
         for column in df_Player_apres_bulk_create.columns:
             # Extraire le code de sexe (F, H, NR) à partir des noms de colonnes
             sex_code = get_sex_code(column)
-            if sex_code and sex_code != 'nr':
+            if sex_code and sex_code != 'nr' and sex_code != '':
                 unique_columns.add(sex_code)
 
         # Supprimer toutes les données de la table D_SEX avec le code 'nr' avant l'insertion

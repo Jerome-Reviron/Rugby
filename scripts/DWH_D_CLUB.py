@@ -6,8 +6,10 @@ def run():
     print("Chargement des données de la classe Club...")
 
     df_Club_apres_bulk_create = pd.DataFrame.from_records(Club.objects.values())
-    df_club = df_Club_apres_bulk_create[(df_Club_apres_bulk_create['region'] == "Auvergne-Rhône-Alpes") 
-                                    & (df_Club_apres_bulk_create['code_commune'] != "NR - Non réparti")]
+    df_club = df_Club_apres_bulk_create[
+        (df_Club_apres_bulk_create['region'] == "Auvergne-Rhône-Alpes") 
+        & (df_Club_apres_bulk_create['code_commune'] != "NR - Non réparti")
+    ]
 
     # Tri du DataFrame selon les colonnes spécifiées
     df_club_sorted = df_club.sort_values(by=['code', 'code_qpv', 'code_commune'])
@@ -46,3 +48,4 @@ def run():
 
 if __name__ == "__main__":
     run()
+

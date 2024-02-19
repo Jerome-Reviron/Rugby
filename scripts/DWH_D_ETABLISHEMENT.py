@@ -44,7 +44,7 @@ def get_etablishement(column):
     elif 'epa' in column.lower():
         return 'epa'
     else:
-        return None
+        return ''
 
 if __name__ == "__main__":
     run()

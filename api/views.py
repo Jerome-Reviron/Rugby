@@ -1,10 +1,12 @@
 from django.shortcuts import render
+from django.shortcuts import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
 
-from app.models import Club, Player, D_CLUB, D_SEX, D_AGEGRP, D_ETABLISHEMENT, D_DATE, F_PLAYER
-from api.serializers import Club_Serializer, Player_Serializer, D_CLUB_Serializer, D_SEX_Serializer, D_AGEGRP_Serializer, D_ETABLISHEMENT_Serializer, D_DATE_Serializer, F_PLAYER_Serializer
+from app.models import Club, Player, City, D_CLUB, D_SEX, D_AGEGRP, D_ETABLISHEMENT, D_DATE, F_PLAYER
+from api.serializers import Club_Serializer, Player_Serializer, City_Serializer, D_CLUB_Serializer, D_SEX_Serializer, D_AGEGRP_Serializer, D_ETABLISHEMENT_Serializer, D_DATE_Serializer, F_PLAYER_Serializer
 
 class BaseAPI(APIView):
     """Base class for API views."""
@@ -54,72 +56,117 @@ class API_Datawarehouse_F_PLAYER(BaseAPI):
     serializer_class = F_PLAYER_Serializer
     default_t = 'F_PLAYER'
 
-    # def post(self, request):
-    #     result = {
-    #         'message':'Voici les résultats trouvés',
-    #         'data':[]
-    #     }
+class API_Datawarehouse_D_DATE(BaseAPI):
+    """API for D_DATE model."""
+    model = D_DATE
+    serializer_class = D_DATE_Serializer
+    default_t = 'D_DATE'
 
-    #     return Response(result, status=status.HTTP_200_OK)
+class API_Datawarehouse_D_SEX(BaseAPI):
+    """API for D_SEX model."""
+    model = D_SEX
+    serializer_class = D_SEX_Serializer
+    default_t = 'D_SEX'
 
-    # def put(self, request, pk=None):
-    #     result = {
-    #         'message':'Voici les résultats trouvés',
-    #         'data':[]
-    #     }
+class API_Datawarehouse_D_AGEGRP(BaseAPI):
+    """API for D_AGEGRP model."""
+    model = D_AGEGRP
+    serializer_class = D_AGEGRP_Serializer
+    default_t = 'D_AGEGRP'
 
-    #     return Response(result, status=status.HTTP_200_OK)
+class API_Datawarehouse_D_CLUB(BaseAPI):
+    """API for D_CLUB model."""
+    model = D_CLUB
+    serializer_class = D_CLUB_Serializer
+    default_t = 'D_CLUB'
 
-    # def patch(self, request, pk=None):
-    #     result = {
-    #         'message':'Voici les résultats trouvés',
-    #         'data':[]
-    #     }
+class API_Datawarehouse_D_ETABLISHEMENT(BaseAPI):
+    """API for D_ETABLISHEMENT model."""
+    model = D_ETABLISHEMENT
+    serializer_class = D_ETABLISHEMENT_Serializer
+    default_t = 'D_ETABLISHEMENT'
 
-    #     return Response(result, status=status.HTTP_200_OK)
+class API_Store_City(APIView, PageNumberPagination):
+    page_size = 5
+    lookup_field = 'postal_code'
 
-    # def delete(self, request, pk=None):
+    def get(self, request, postal_code=None):
+        if postal_code is not None:
+            data = City.objects.filter(postal_code=postal_code)
+            serializer = City_Serializer(data=data, many=True)
+        else:
+            
+            data = City.objects.all()
+            serializer = City_Serializer(data=data, many=True)
+        serializer.is_valid()
 
-    #     rows = Club.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+        result = {
+            'count': City.objects.count(),
+            'data': serializer.data
+        }
 
-    #     rows = Player.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+        return Response(data=result, status=status.HTTP_200_OK)
 
-    #     rows = D_CLUB.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+    def post(self, request, postal_code=None):
+        data = request.data
+        serializer = City_Serializer(data=data)
 
-    #     rows = D_SEX.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    #     rows = D_AGEGRP.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+        return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    #     rows = D_ETABLISHEMENT.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+    def put(self, request, postal_code=None):
+        try:
+            city = City.objects.get(postal_code=postal_code)
+        except City.DoesNotExist:
+            return Response({'error': 'City not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    #     rows = D_DATE.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+        serializer = City_Serializer(city, data=request.data)
 
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
 
-    #     rows = F_PLAYER.objects.all()
-    #     count = rows.count()
-    #     rows.delete()
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    #     conn = sqlite3.connect(DATABASES['default']['NAME'])
-    #     conn.execute("VACUUM")
-    #     conn.close()
+    def patch(self, request, postal_code=None):
+        try:
+            city = City.objects.get(postal_code=postal_code)
+        except City.DoesNotExist:
+            return Response({'error': 'City not found'}, status=status.HTTP_404_NOT_FOUND)
 
-    #     result = {
-    #         'message': f"{count} lignes ont été supprimées",
-    #         'data': []
-    #     }
+        serializer = City_Serializer(city, data=request.data, partial=True)
 
-    #     return Response(result, status=status.HTTP_200_OK)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, postal_code=None):
+        if postal_code is not None:
+            data = City.objects.filter(postal_code=postal_code)
+            if data.exists():
+                data.delete()
+                return Response(status=status.HTTP_204_NO_CONTENT)
+            else:
+                return Response({"error": "City not found"}, status=status.HTTP_404_NOT_FOUND)
+        else:
+            # Delete all City objects if no postal_code is provided
+            City.objects.all().delete()
+            return Response(status=status.HTTP_204_NO_CONTENT)
+
+    # Recherche par nom de ville
+    def search_by_name(self, request, city_name):
+        data = City.objects.filter(name__icontains=city_name)
+        serializer = City_Serializer(data=data, many=True)
+
+        result = {
+            'count': data.count(),
+            'data': serializer.data
+        }
+
+        return Response(data=result, status=status.HTTP_200_OK)
+
