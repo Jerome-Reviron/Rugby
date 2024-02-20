@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from app.models import Club, Player
+from app.models import Club, Player, City
 from app.models import D_CLUB, D_SEX, D_AGEGRP, D_ETABLISHEMENT, D_DATE
 from app.models import F_PLAYER
 
@@ -42,4 +42,9 @@ class D_DATE_Serializer(serializers.ModelSerializer):
 class F_PLAYER_Serializer(serializers.ModelSerializer):
     class Meta:
         model = F_PLAYER
+        fields = '__all__'
+
+class City_Serializer(serializers.ModelSerializer):
+    class Meta:
+        model = City
         fields = '__all__'
