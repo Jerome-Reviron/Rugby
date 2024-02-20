@@ -20,14 +20,14 @@ def run():
 
     club_data = Club.objects.filter(region="Auvergne-Rhône-Alpes").values()
     df_club = pd.DataFrame.from_records(club_data)
-    # print(df_club.head())
 
     # Fusionner les dataframes sur les colonnes communes
     common_columns = ['code_commune', 'commune', 'code_qpv', 'nom_qpv', 'departement', 'region', 'statut_geo', 'code', 'federation']
     df_fact = pd.merge(df_player, df_club, on=common_columns)
 
     # Filtrer les données
-    df_fact = df_fact.query('region == "Auvergne-Rhône-Alpes" and commune != "NR - Non réparti"')
+    df_fact = df_fact.query('region == "Auvergne-Rhône-Alpes" and code_commune != "NR - Non réparti"')
+    # print(df_fact.columns)
 
     # Supprimer les colonnes spécifiées
     df_fact = df_fact.drop(columns=["f_nr", "h_nr", "nr_nr", "total_x", "total_y"])
@@ -66,7 +66,6 @@ def run():
 
             # Supprimer toutes les données de la table D_SEX avec le code 'nr' avant l'insertion
             D_SEX.objects.all().delete()
-            print("Anciennes données effacées avant insertion!")
 
             # Utiliser bulk_create pour insérer les objets D_SEX en une seule requête
             D_SEX.objects.bulk_create([
@@ -83,6 +82,7 @@ def run():
             print("Script D_SEX terminé avec succès!")
         except IntegrityError as e:
             print(f"Erreur lors de l'insertion des données : {e}")
+    melted_dataframe_1 = pd.merge(melted_dataframe_1, df_sex_apres_bulk_create, on='sexcode', how='left')
 
     # Bulk create D_AGEGRP records, handling possible duplicates
     with transaction.atomic():
@@ -100,7 +100,6 @@ def run():
 
             # Supprimer toutes les données de la table D_AGEGRP avant l'insertion
             D_AGEGRP.objects.all().delete()
-            print("Anciennes données effacées avant insertion!")
 
             # Utiliser bulk_create pour insérer les objets D_AGEGRP en une seule requête
             D_AGEGRP.objects.bulk_create([
@@ -117,6 +116,7 @@ def run():
             print("Script D_AGEGRP terminé avec succès!")
         except IntegrityError as e:
             print(f"Erreur lors de l'insertion des données : {e}")
+    melted_dataframe_1 = pd.merge(melted_dataframe_1, df_agegrp_apres_bulk_create, on='agegrplabel', how='left')
 
     # Colonnes à fondre (etablishementlabel/nombre)
     melt_columns_2 = ["clubs", "epa"]
@@ -139,7 +139,7 @@ def run():
     with transaction.atomic():
         try:
             # Créer une liste unique de noms de colonnes pour les établissements
-            unique_etablishments = set(melted_dataframe_2['etablishementlabel'].unique())
+            unique_etablishements = set(melted_dataframe_2['etablishementlabel'].unique())
 
             # Supprimer toutes les données de la table D_ETABLISHEMENT avant l'insertion
             D_ETABLISHEMENT.objects.all().delete()
@@ -147,15 +147,20 @@ def run():
             # Utiliser bulk_create pour insérer les objets D_ETABLISHEMENT en une seule requête
             D_ETABLISHEMENT.objects.bulk_create([
                 D_ETABLISHEMENT(
-                    etablishementlabel=etablishment
+                    etablishementlabel=etablishement
                 )
-                for etablishment in unique_etablishments
+                for etablishement in unique_etablishements
             ])
+
+            # Stocker le DataFrame dans une variable
+            df_etablishement_apres_bulk_create = pd.DataFrame.from_records(D_ETABLISHEMENT.objects.values())
+            # print("Colonnes de df_etablishement_apres_bulk_create:", df_etablishement_apres_bulk_create.columns)
 
             # Afficher un message de succès
             print("Script D_ETABLISHEMENT terminé avec succès!")
         except IntegrityError as e:
             print(f"Erreur lors de l'insertion des données : {e}")
+    melted_dataframe_2 = pd.merge(melted_dataframe_2, df_etablishement_apres_bulk_create, on='etablishementlabel', how='left')
 
     # Bulk create D_DATE records, handling possible duplicates
     with transaction.atomic():
@@ -166,7 +171,6 @@ def run():
             if years:
                 # Supprimez toutes les données de la table D_DATE avant l'insertion
                 D_DATE.objects.all().delete()
-                print("Anciennes données effacées avant insertion!")
 
                 # Utilisez bulk_create pour insérer l'objet D_DATE en une seule requête pour chaque année
                 D_DATE.objects.bulk_create([
@@ -192,7 +196,6 @@ def run():
         try:
             # Supprimer toutes les données de la table D_CLUB avant l'insertion
             D_CLUB.objects.all().delete()
-            print("Anciennes données effacées avant insertion!")
 
             for _, row in df_club_sorted.iterrows():
                 key = f"{row['code']}-{row['code_qpv']}-{row['code_commune']}"
@@ -213,10 +216,36 @@ def run():
 
             # Stocker le DataFrame dans une variable
             df_club_apres_bulk_create = pd.DataFrame.from_records(D_CLUB.objects.values())
+            # print("Colonnes de df_club_apres_bulk_create:", df_club_apres_bulk_create.columns)
 
             print("Script D_CLUB terminé avec succès!")
         except IntegrityError as e:
             print(f"Erreur lors de l'insertion des données : {e}")
+
+    df_fact = df_fact.drop(columns=['id_x', 'commune', 'nom_qpv', 'clubs', 'epa', 'departement',
+    'region', 'statut_geo', 'federation', 'f_1_4_ans', 'f_5_9_ans',
+    'f_10_14_ans', 'f_15_19_ans', 'f_20_24_ans', 'f_25_29_ans',
+    'f_30_34_ans', 'f_35_39_ans', 'f_40_44_ans', 'f_45_49_ans',
+    'f_50_54_ans', 'f_55_59_ans', 'f_60_64_ans', 'f_65_69_ans',
+    'f_70_74_ans', 'f_75_79_ans', 'f_80_99_ans', 'h_1_4_ans',
+    'h_5_9_ans', 'h_10_14_ans', 'h_15_19_ans', 'h_20_24_ans', 'h_25_29_ans',
+    'h_30_34_ans', 'h_35_39_ans', 'h_40_44_ans', 'h_45_49_ans',
+    'h_50_54_ans', 'h_55_59_ans', 'h_60_64_ans', 'h_65_69_ans',
+    'h_70_74_ans', 'h_75_79_ans', 'h_80_99_ans','id_y'])
+
+    df_club_apres_bulk_create['code'] = df_club_apres_bulk_create['code'].astype(str)
+    df_fact['code'] = df_fact['code'].astype(str)
+
+    df_fact = pd.merge(df_fact, melted_dataframe_1, left_on=['code', 'code_qpv', 'code_commune'], right_on=['code', 'code_qpv', 'code_commune'], how='left')
+    df_fact = pd.merge(df_fact, melted_dataframe_2, left_on=['code', 'code_qpv', 'code_commune'], right_on=['code', 'code_qpv', 'code_commune'], how='left')
+    df_fact = pd.merge(df_fact, df_club_apres_bulk_create, left_on=['code', 'code_qpv', 'code_commune'], right_on=['code', 'code_qpv', 'code_commune'], how='left')
+    df_fact = df_fact.drop(columns=['date_x', 'nom_qpv_x',
+        'federation_x', 'region_x', 'departement_x', 'commune_x',
+        'statut_geo_x', 'date_y', 'category_MC_1', 'value_MC_1','nom_qpv_y', 'federation_y', 'region_y', 'departement_y',
+        'commune_y', 'statut_geo_y','category_MC_2', 'value_MC_2'])
+    print(df_fact.columns)
+    del df_club_apres_bulk_create, df_sex_apres_bulk_create, df_date_apres_bulk_create, df_etablishement_apres_bulk_create, melted_dataframe_1, melted_dataframe_2
+    df_fact.to_csv('data/df_fact.csv', sep=';')
 
 def find_unique_years(data_folder):
     # Trouver tous les fichiers CSV dans le dossier spécifié
