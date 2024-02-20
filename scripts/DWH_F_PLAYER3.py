@@ -5,7 +5,7 @@ from django.db import transaction
 def run():
 
     df_fact = pd.read_csv('data/df_fact.csv', sep=';')
-    df_fact = df_fact.query('region == "Auvergne-Rhône-Alpes" and code_commune != "NR - Non réparti" and nombre != 0')
+    df_fact = df_fact.query('region == "Auvergne-Rhône-Alpes" and code_commune != "NR - Non réparti" and nombre_club != 0 and nombre_player != 0')
 
     # Liste pour stocker les objets F_PLAYER
     f_player_objects = []
@@ -64,7 +64,8 @@ def run():
                     D_AGEGRP_FK=d_agegrp_instance,
                     D_DATE_FK=d_date_instance,
                     D_ETABLISHEMENT_FK=d_etablishement_instance,
-                    nombre=row['nombre']
+                    nombre_club=row['nombre_club'],
+                    nombre_player=row['nombre_player']
                 )
 
                 f_player_objects.append(f_player_instance)

@@ -50,8 +50,11 @@ def run():
 
     melted_dataframe_1['sexcode'] = melted_dataframe_1['category_MC_1'].apply(get_sex_code)
     melted_dataframe_1['agegrplabel'] = melted_dataframe_1['category_MC_1'].apply(get_agegrp_label)
+    melted_dataframe_1['nombre_player'] = melted_dataframe_1['value_MC_1']
     melted_dataframe_1 = melted_dataframe_1.loc[(melted_dataframe_1['sexcode'].notna()) & (melted_dataframe_1['value_MC_1'].notna())]
     melted_dataframe_1 = melted_dataframe_1.loc[(melted_dataframe_1['agegrplabel'].notna()) & (melted_dataframe_1['value_MC_1'].notna())]
+    melted_dataframe_1 = melted_dataframe_1.loc[(melted_dataframe_1['nombre_player'] != 0)]
+
 
     # Bulk create D_SEX records, handling possible duplicates
     with transaction.atomic():
@@ -118,7 +121,7 @@ def run():
             print(f"Erreur lors de l'insertion des données : {e}")
     melted_dataframe_1 = pd.merge(melted_dataframe_1, df_agegrp_apres_bulk_create, on='agegrplabel', how='left')
 
-    # Colonnes à fondre (etablishementlabel/nombre)
+    # Colonnes à fondre (etablishementlabel)
     melt_columns_2 = ["clubs", "epa"]
 
     # Effectuer la fusion des colonnes spécifiées pour les établissements
@@ -131,9 +134,9 @@ def run():
 
     # Créer une colonne 'etablishementlabel' à partir du nom de la colonne 'category'
     melted_dataframe_2['etablishementlabel'] = melted_dataframe_2['category_MC_2'].apply(get_etablishement_label)
-    melted_dataframe_2['nombre'] = melted_dataframe_2['value_MC_2']
+    melted_dataframe_2['nombre_club'] = melted_dataframe_2['value_MC_2']
     melted_dataframe_2 = melted_dataframe_2.loc[(melted_dataframe_2['etablishementlabel'] != '')]
-    melted_dataframe_2 = melted_dataframe_2.loc[(melted_dataframe_2['nombre'] != 0)]
+    melted_dataframe_2 = melted_dataframe_2.loc[(melted_dataframe_2['nombre_club'] != 0)]
 
     # Bulk create D_ETABLISHEMENT records, handling possible duplicates
     with transaction.atomic():
@@ -198,21 +201,22 @@ def run():
             D_CLUB.objects.all().delete()
 
             for _, row in df_club_sorted.iterrows():
-                key = f"{row['code']}-{row['code_qpv']}-{row['code_commune']}"
-                D_CLUB.objects.update_or_create(
-                    code_code_qpv_code_commune=key,
-                    defaults={
-                        'code': row['code'],
-                        'code_qpv': row['code_qpv'],
-                        'nom_qpv': row['nom_qpv'],
-                        'federation': row['federation'],
-                        'region': row['region'],
-                        'departement': row['departement'],
-                        'code_commune': row['code_commune'],
-                        'commune': row['commune'],
-                        'statut_geo': row['statut_geo'],
-                    }
-                )
+                if row['code_commune'] != "NR - Non réparti":
+                    key = f"{row['code']}-{row['code_qpv']}-{row['code_commune']}"
+                    D_CLUB.objects.update_or_create(
+                        code_code_qpv_code_commune=key,
+                        defaults={
+                            'code': row['code'],
+                            'code_qpv': row['code_qpv'],
+                            'nom_qpv': row['nom_qpv'],
+                            'federation': row['federation'],
+                            'region': row['region'],
+                            'departement': row['departement'],
+                            'code_commune': row['code_commune'],
+                            'commune': row['commune'],
+                            'statut_geo': row['statut_geo'],
+                        }
+                    )
 
             # Stocker le DataFrame dans une variable
             df_club_apres_bulk_create = pd.DataFrame.from_records(D_CLUB.objects.values())

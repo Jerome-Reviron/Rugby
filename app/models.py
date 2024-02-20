@@ -139,7 +139,9 @@ class F_PLAYER(models.Model):
     D_AGEGRP_FK = models.ForeignKey('D_AGEGRP', on_delete=models.CASCADE)
     D_DATE_FK = models.ForeignKey('D_DATE', on_delete=models.CASCADE)
     D_ETABLISHEMENT_FK = models.ForeignKey('D_ETABLISHEMENT', on_delete=models.CASCADE)
-    nombre = models.CharField(max_length=10, blank=True, null=True, default=None)
+    nombre_club = models.CharField(max_length=10, blank=True, null=True, default=None)
+    nombre_player = models.CharField(max_length=10, blank=True, null=True, default=None)
+
     class Meta:
         unique_together = ('D_5_PK', 'D_CLUB_FK', 'D_SEX_FK', 'D_AGEGRP_FK', 'D_DATE_FK', 'D_ETABLISHEMENT_FK')
 
