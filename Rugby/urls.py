@@ -19,10 +19,13 @@ from django.urls import path, include
 from api import urls as api_urls
 from app.views import index
 from app.views import licences
+from app.views import map_view
+
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/', include(api_urls)),
     path('', index),
     path('licences/', licences),
+    path('map/', map_view, name='map'),
 ]

@@ -1,7 +1,9 @@
 from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 from django.shortcuts import render
+import requests
 from app.models import Club
 from app.models import Player
+
 
 def index(request):
     # Récupérer tous les clubs
@@ -48,3 +50,10 @@ def licences(request):
 
     context = {'players': players}
     return render(request, 'licences.html', context)
+
+def map_view(request):
+    # Faire un appel API
+    response = requests.get('http://localhost:8000/api/formation/')
+    data = response.json()
+
+    return render(request, 'map.html', {'data': data})
