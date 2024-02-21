@@ -48,3 +48,20 @@ class City_Serializer(serializers.ModelSerializer):
     class Meta:
         model = City
         fields = '__all__'
+
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        return {
+            "type": "Feature",
+            "properties": {
+                "postal_code": representation['postal_code'],
+                "name": representation['name'],
+                "departement": representation['departement'],
+                "region": representation['region'],
+                "country": representation['country']
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [float(representation['latitude']), float(representation['longitude'])]
+            }
+        }
