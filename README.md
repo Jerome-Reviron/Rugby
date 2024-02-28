@@ -46,6 +46,10 @@ Création d’un nouveau repository GitHub.
 - Créez un fichier docker-compose.yml à la racine du projet avec un contenu de base.<br>
 ![docker-compose](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/docker-compose.png)
 
+### Création du fichier requirements.txt à la racine
+- Créez un fichier requirements.txt à la racine du projet avec le contenu suivant :
+![requirements](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/requirements.png)
+
 ### Particularités
 La calculatrice à 3 boutons présente plusieurs particularités pour améliorer l'expérience utilisateur :
 
