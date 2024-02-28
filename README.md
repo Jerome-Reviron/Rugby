@@ -49,21 +49,28 @@ Création d’un nouveau repository GitHub.
 ### Création du fichier requirements.txt à la racine
 - Créez un fichier requirements.txt à la racine du projet avec le contenu suivant :<br>
 ![requirements](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/requirements.png)
-- Puis on fait la commande suivante : 
-django-admin startproject Pharma_post pour créer un fichier Pharma_post version django.
 
-- Ensuite, on vérifie que l’on se trouve bien sur le bon chemin Immo avec la commande cd Pharma_post, et si on se trouve ici : C:\Users\HB\Desktop\root\ Pharma_post \ Pharma_post > alors on remonte d’un cran avec la commande : cd .. pour être à la racine du dossier Pharma_post.
+### Commandes pour créer le projet Django
+1. Exécutez la commande suivante pour créer un projet Django nommé Pharma_post : django-admin startproject Pharma_post
+2. Vérifiez que vous êtes dans le bon répertoire avec la commande : cd Pharma_post
+3. Si vous vous trouvez dans le répertoire : C:\Users\HB\Desktop\root\Pharma_post\Pharma_post >
+4. Sinon remontez d'un cran avec la commande : cd ..
+5. Ensuite, créez le dossier "app" avec la commande : python manage.py startapp app
 
-- Après on crée le dossier app avec la commande : 
-python manage.py startapp app.
+### Commandes GitHub
+1. Ajoutez tous les fichiers au suivi de Git : git add .
+2. Effectuez un premier commit : git commit -m "Initial commit"
+3. Poussez les changements vers la branche principale (main) : git push origin main
+4. Créez une nouvelle branche "dev" : git checkout -b dev
+5. Ajoutez et committez les modifications sur la branche "dev" : git add . et git commit -m "first commit on dev branch"
+6. Poussez les changements vers la branche "dev" : git push origin dev
 
-### Particularités
-La calculatrice à 3 boutons présente plusieurs particularités pour améliorer l'expérience utilisateur :
+### Commande Docker
 
-#### Redémarrage de l'Application
-
-À tout moment, l'utilisateur peut choisir de redémarrer l'application en appuyant sur le caractère "R" puis en appuyant sur "valider".<br>
-Cela permet de commencer une nouvelle séquence d'opérations sans quitter l'application.
+1. docker-compose build
+2. docker-compose up
+3. python manage.py makemigrations
+4. python manage.py migrate
 
 #### Gestion de la Division par Zéro
 
