@@ -39,19 +39,12 @@ Création d’un nouveau repository GitHub.
 - Enfin, supprimez le dossier Pharma_post du répertoire.
 
 ### Création du fichier Dockerfile à la racine
-Créez un fichier Dockerfile à la racine du projet avec le contenu suivant :<br>
+- Créez un fichier Dockerfile à la racine du projet avec le contenu suivant :<br>
 ![Dockerfile](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/Dockerfile.png)
 
-### Ensemble de calculs possible
-- Addition simple avec des Int
-- Addition avec des Float
-- Soustraction simple(Int & Float)
-- Multiplication (Int & Float)
-- Division (Int & Float)
-- Division Euclidienne (Int & Float)
-- Puissance (Int & Float)
-- Modulo (Int & Float)
-- Calcul complex (Int, Float & Nombreux opérateurs)
+### Création du fichier docker-compose.yml à la racine
+- Créez un fichier docker-compose.yml à la racine du projet avec un contenu de base.<br>
+![docker-compose](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/docker-compose.png)
 
 ### Particularités
 La calculatrice à 3 boutons présente plusieurs particularités pour améliorer l'expérience utilisateur :
