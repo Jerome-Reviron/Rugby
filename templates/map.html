@@ -1,0 +1,146 @@
+{% comment %} {% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+    <script src="https://unpkg.com/leaflet-search@2.9.9/dist/leaflet-search.min.js"></script>
+</head>
+<body>
+    <div id="mapid" style="height: 600px;"></div>
+
+    <script>
+        // Créer une carte sur Clermont-Ferrand
+        var map = L.map('mapid').setView([45.7772, 3.0870], 13);
+
+        // Ajouter un fond de carte
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 20,
+        }).addTo(map);
+
+        // Définir l'icône personnalisée
+        var markerIcon = L.icon({
+            iconUrl: '{% static 'images/marker.png' %}',
+            shadowUrl: '{% static 'images/ombre_marker.png' %}',
+
+            iconSize: [30, 55],
+            shadowSize: [50, 64],
+            iconAnchor: [-5, 55],
+            shadowAnchor: [4, 62],
+            popupAnchor: [20, -45]
+        });
+
+        // Plugin MarkerCluster pour regrouper les marqueurs
+        var markers = L.markerClusterGroup();
+
+        // Requête à l'API avec le paramètre t=City
+        fetch('http://localhost:8000/api/formation/?t=City')
+        .then(response => response.json())
+        .then(data => {
+            console.log(data);
+            // Utiliser les données de l'API pour ajouter des marqueurs au groupe
+            for (var i = 0; i < data.length; i++) {
+                var city = data[i];
+                if (city && city.properties && city.properties.name) {
+                    var lat = parseFloat(city.geometry.coordinates[1]); // Latitude
+                    var lon = parseFloat(city.geometry.coordinates[0]); // Longitude
+                    console.log('Latitude:', lat);
+                    console.log('Longitude:', lon);
+                    console.log('Nom de la ville:', city.properties.name);
+
+                    if (!isNaN(lat) && !isNaN(lon) && city.properties.name) {
+                        var marker = L.marker([lat, lon], {icon: markerIcon})
+                            .bindPopup(city.properties.name);
+                        markers.addLayer(marker);
+                    } else {
+                        console.log('Coordonnées invalides ou nom de ville non défini pour la ville à l\'index :', i);
+                    }
+                } else {
+                    console.log('Nom de ville non défini à l\'index :', i);
+                }
+            }
+            map.addLayer(markers);
+        });
+
+        // Panneau de recherche à votre carte
+        var searchControl = new L.Control.Search({
+            layer: markers,
+            propertyName: 'data[0].properties.name',
+            marker: false, 
+            moveToLocation: function (latlng, title, map) {
+                map.setView(latlng, 15);
+            }
+        });      
+
+        map.addControl(searchControl);
+    </script>
+</body>
+</html> {% endcomment %}
+
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Leaflet Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+</head>
+<body>
+    <div id="mapid" style="height: 600px;"></div>
+
+    <script>
+        // Créer une carte sur Clermont-Ferrand
+        var map = L.map('mapid').setView([45.7772, 3.0870], 10);
+
+        // Ajouter un fond de carte
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+        }).addTo(map);
+
+        // Définir l'icône personnalisée
+        var markerIcon = L.icon({
+            iconUrl: '{% static 'images/marker.png' %}',
+            shadowUrl: '{% static 'images/ombre_marker.png' %}',
+
+            iconSize: [30, 55],
+            shadowSize: [50, 64],
+            iconAnchor: [-5, 55],
+            shadowAnchor: [4, 62],
+            popupAnchor: [20, -45]
+        });
+
+        {% comment %} L.marker([45.727873, 3.234272], {icon: markerIcon}).addTo(map); {% endcomment %}
+
+        // Ajouter la fonctionnalité de popup lors du clic sur la carte
+        var popup = L.popup();
+
+        function onMapClick(e) {
+            popup
+                .setLatLng(e.latlng)
+                .setContent("Vous etes ici : " + e.latlng.toString())
+                .openOn(map);
+        }
+
+        map.on('click', onMapClick);
+
+        // Faire une requête à votre API avec le paramètre t=City
+        fetch('http://localhost:8000/api/formation/?t=City')
+        .then(response => response.json())
+        .then(data => {
+            // Utiliser les données de l'API pour ajouter des marqueurs à la carte
+            for (var i = 0; i < data.data.length; i++) {
+                var city = data.data[i];
+                L.marker([parseFloat(city.latitude), parseFloat(city.longitude)], {icon: markerIcon}).addTo(map)
+                    .bindPopup(city.name)
+                    .openPopup();
+            }
+        });
+    </script>
+</body>
+</html>
+

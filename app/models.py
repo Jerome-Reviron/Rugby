@@ -148,6 +148,8 @@ class F_PLAYER(models.Model):
 class City(models.Model):
     postal_code = models.CharField(max_length=5, primary_key=True)
     name = models.CharField(max_length=300)
+    latitude = models.CharField(max_length=150)
+    longitude = models.CharField(max_length=150)
     departement = models.CharField(max_length=150)
     region = models.CharField(max_length=150)
     country = models.CharField(max_length=100)
