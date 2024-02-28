@@ -34,16 +34,13 @@ Création d’un nouveau repository GitHub.
 - Démarrez en créant un nouveau repository GitHub. Dans cet exemple, le repository est nommé Pharma_post.
 - Créez un nouveau dossier dans le répertoire racine de votre choix.
 - Ouvrez le dossier nouvellement créé avec Visual Studio Code.
-- Dans le terminal de VS Code, exécutez la commande suivante pour cloner le repository GitHub dans votre dossier local :
+- Dans le terminal de VS Code, exécutez la commande suivante pour cloner le repository GitHub dans votre dossier local :git clone https://github.com/Jerome-Reviron/Pharma_post.git.
 - Fermez Visual Studio Code pour déplacer le fichier .git et le README.md du dossier Pharma_post à la racine du projet.
 - Enfin, supprimez le dossier Pharma_post du répertoire.
 
-### Utilisation
-1. Exécutez dans un IDE, avec une installation Python, le run du programme.
-2. Une fenêtre de calculatrice graphique s'ouvrira.
-3. Utilisez les boutons "↑" et "↓" pour faire défiler les caractères.
-4. Appuyez sur le bouton "Valider" pour confirmer chaque choix de caractère.
-5. Explorez les fonctionnalités de la calculatrice et redémarrez l'application au besoin.
+### Création du fichier Dockerfile à la racine
+Créez un fichier Dockerfile à la racine du projet avec le contenu suivant :
+
 
 ### Ensemble de calculs possible
 - Addition simple avec des Int
