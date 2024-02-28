@@ -72,12 +72,10 @@ Création d’un nouveau repository GitHub.
 3. python manage.py makemigrations
 4. python manage.py migrate
 
-#### Gestion de la Division par Zéro
+#### Commande settings.py
 
-La calculatrice intègre une protection contre la division par zéro. Si une division par zéro est détectée lors de l'évaluation de l'expression, un message d'erreur est affiché à l'utilisateur.<br>
-La calculatrice doit ensuite etre réinitialisée avec le "redémarrer l'application" pour éviter toute incohérence.
-
-#### Désactivation du Clavier
-
-Pour promouvoir une expérience utilisateur centrée sur la souris, l'utilisation du clavier est désactivée pendant l'exécution du programme.<br> 
-Cela garantit que l'utilisateur interagit exclusivement avec l'interface graphique de la calculatrice à l'aide de la souris.
+![settings_path](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/settings_path.png)<br>
+![settings_installed_app](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/settings_installed_app.png)<br>
+![settings_root_templates](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/settings_root_templates.png)<br>
+![settings_databases](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/settings_databases.png)<br>
+![settings_static](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/settings_static.png)<br>
