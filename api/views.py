@@ -4,6 +4,8 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from app.models import Club, Player, City, D_CLUB, D_SEX, D_AGEGRP, D_ETABLISHEMENT, D_DATE, F_PLAYER
 from api.serializers import Club_Serializer, Player_Serializer, City_Serializer, D_CLUB_Serializer, D_SEX_Serializer, D_AGEGRP_Serializer, D_ETABLISHEMENT_Serializer, D_DATE_Serializer, F_PLAYER_Serializer
@@ -88,6 +90,8 @@ class API_Datawarehouse_D_ETABLISHEMENT(BaseAPI):
 
 class API_Store_City(APIView, PageNumberPagination):
     page_size = 5
+    authentication_classes = [TokenAuthentication]
+    permission_classes = [IsAuthenticated]
     lookup_field = 'postal_code'
 
     def get(self, request, postal_code=None):

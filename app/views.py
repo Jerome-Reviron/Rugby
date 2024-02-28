@@ -57,3 +57,5 @@ def map_view(request):
     data = response.json()
 
     return render(request, 'map.html', {'data': data})
+
+# def connection
