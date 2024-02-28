@@ -39,7 +39,7 @@ Création d’un nouveau repository GitHub.
 - Enfin, supprimez le dossier Pharma_post du répertoire.
 
 ### Création du fichier Dockerfile à la racine
-Créez un fichier Dockerfile à la racine du projet avec le contenu suivant :
+Créez un fichier Dockerfile à la racine du projet avec le contenu suivant :<br>
 ![Dockerfile](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/Dockerfile.png)
 
 ### Ensemble de calculs possible
