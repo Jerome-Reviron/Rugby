@@ -40,7 +40,7 @@ Création d’un nouveau repository GitHub.
 
 ### Création du fichier Dockerfile à la racine
 Créez un fichier Dockerfile à la racine du projet avec le contenu suivant :
-![Dockerfile](https://github.com/Jerome-Reviron/Exo_scrapping/blob/main/images/scrapping_fromage.png)
+![Dockerfile](https://github.com/Jerome-Reviron/Rugby/tree/main/images_documentation/Dockerfile.png)
 
 ### Ensemble de calculs possible
 - Addition simple avec des Int
