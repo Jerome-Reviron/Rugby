@@ -47,8 +47,15 @@ Création d’un nouveau repository GitHub.
 ![docker-compose](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/docker-compose.png)
 
 ### Création du fichier requirements.txt à la racine
-- Créez un fichier requirements.txt à la racine du projet avec le contenu suivant :
+- Créez un fichier requirements.txt à la racine du projet avec le contenu suivant :<br>
 ![requirements](https://github.com/Jerome-Reviron/Rugby/blob/main/images_documentation/requirements.png)
+- Puis on fait la commande suivante : 
+django-admin startproject Pharma_post pour créer un fichier Pharma_post version django.
+
+- Ensuite, on vérifie que l’on se trouve bien sur le bon chemin Immo avec la commande cd Pharma_post, et si on se trouve ici : C:\Users\HB\Desktop\root\ Pharma_post \ Pharma_post > alors on remonte d’un cran avec la commande : cd .. pour être à la racine du dossier Pharma_post.
+
+- Après on crée le dossier app avec la commande : 
+python manage.py startapp app.
 
 ### Particularités
 La calculatrice à 3 boutons présente plusieurs particularités pour améliorer l'expérience utilisateur :
